@@ -2,13 +2,7 @@ This Repo documents my various validator projects in detail
 
 
 
-- Complete infrastructure diagrams
-- Config files and server setups
-- Monitoring & SSH security
-- Guides for Ethereum, Eigenlayer, and Bitcoin nodes
-- Steps to rebuild everything from scratch
-- My roadmap and future plans
+Infrastructure overview
+## 🗺️ Infrastructure Overview
 
-📍 *Purpose*: Learn DevOps and Node Ops deeply by doing it all from scratch, securely, and professionally.
-
-📂 See [`docs/`](docs/) for full documentation.
+![Validator Architecture](docs/architecture/Validator-Overview.drawio.svg)
