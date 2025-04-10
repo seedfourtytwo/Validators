@@ -10,7 +10,7 @@
 
 I've been in and around the Crypto space for over 4 years now and my goal is to start building in this space. This is my way of learning about new technologies and putting it into practice. (I'm starting for a fraly low technical background)
 
-## 🛠️ Technologies & Concepts
+## Technologies & Concepts
 
 ### General Skills
 - **Linux:** User/Disk/Services management, System optimization & tuning
@@ -23,11 +23,15 @@ I've been in and around the Crypto space for over 4 years now and my goal is to 
 - **Ethereum & Eigenlayer:** Validator build upcoming
 - **Bitcoin:** Node build upcoming
 
-## 🏗️ Infrastructure Overview
+## Infrastructure Overview
 
 Infrastructure overview
-## 🗺️ Infrastructure Overview (click to enlarge)
+## Infrastructure Overview (click to enlarge)
 
 ![Validator Architecture](Architecture/docs/Infra-overview.drawio.png)
+
+## Solana Tesetnet validator overview:
+https://www.validators.app/validators/JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF?locale=en&network=testnet
+Metrics: https://metric.seed42.co/public-dashboards/ceff27f0e3ba4434912481b5b93f96a1
 
 
