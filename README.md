@@ -69,6 +69,8 @@ After 4years+ in the Crypto industry, it is time for me to start building. This 
 ## Other
 - **nginx**: reverse proxy and ssl certificat manavement
 - **Termius**: Local CLI for remot access to servers
+- **Git/Github**: Used for documentation in this case
+- **AI**: Cursor - Chat GPT - Claude Sonnet, for learning and isntructions along the way
 
 
 
