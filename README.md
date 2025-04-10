@@ -28,7 +28,7 @@ I've been in and around the Crypto space for over 4 years now and my goal is to 
 Infrastructure overview
 ## Infrastructure Overview (click to enlarge)
 
-![Validator Architecture](Architecture/docs/Infra-overview.drawio.png)
+![Validator Architecture](overview/infra-overview.png)
 
 ## Solana Tesetnet validator:
 https://www.validators.app/validators/JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF?locale=en&network=testnet
