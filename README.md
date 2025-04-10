@@ -1,43 +1,74 @@
-## Table of Contents
-- [Introduction](#introduction)
-- [Technologies & Concepts](#technologies--concepts)
-  - [General Skills](#general-skills)
-  - [Cryptocurrency](#cryptocurrency)
-- [Infrastructure Overview](#infrastructure-overview)
-
-
 # Validator Projects Documentation
 
-I've been in and around the Crypto space for over 4 years now and my goal is to start building in this space. This is my way of learning about new technologies and putting it into practice. (I'm starting for a fraly low technical background)
+## Overview
+After 4years+ in the Crypto industry, it is time for me to start building. This project serves as both documentation and a learning platform for blockchain infrastructure.
 
-## Technologies & Concepts
+## Table of Contents
+- [Project Structure](#project-structure)
+- [Validator Projects](#validator-projects)
+  - [Solana Validator](#solana-validator)
+  - [Ethereum Validator (Upcoming)](#ethereum-validator)
+  - [Bitcoin Node (Upcoming)](#bitcoin-node)
+- [Infrastructure](#infrastructure)
+- [Skills & Technologies](#skills--technologies)
+- [Monitoring & Metrics](#monitoring--metrics)
 
-### General Skills
-- **Linux:** User/Disk/Services management, System optimization & tuning
-- **SSH:** Key management, Hardening, Auditing
-- **Networking:** Routing, Firewalls, Port forwarding
-- **Other:** Docker
+## Project Structure
+```
+.
+├── solana-validator/     # Solana validator documentation and configs
+├── ethereum/            # Ethereum validator documentation (upcoming)
+├── bitcoin-node/        # Bitcoin node documentation (upcoming)
+├── infrastructure/      # Infrastructure setup and configuration
+├── docs/               # General documentation
+└── overview/           # Architecture diagrams and overviews
+```
 
-### Cryptocurrency
-- **Solana:** Key management, Testnet validator (Mainnet upcoming), Monitoring, JITO (upcoming)
-- **Ethereum & Eigenlayer:** Validator build upcoming
-- **Bitcoin:** Node build upcoming
+## Validator Projects
 
-## Infrastructure Overview
+### Solana Validator
+- **Status**: Active on Testnet
+- **Validator Address**: [JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF](https://www.validators.app/validators/JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF?locale=en&network=testnet)
+- **Documentation**: [Solana Validator Setup](solana-validator/README.md)
+- **Metrics Dashboard**: [Validator Metrics](https://metric.seed42.co/public-dashboards/ceff27f0e3ba4434912481b5b93f96a1)
 
-Infrastructure overview
-## Infrastructure Overview (click to enlarge)
+### Ethereum Validator
+- **Status**: Planning Phase
+- **Documentation**: Coming Soon
 
+### Bitcoin Node
+- **Status**: Planning Phase
+- **Documentation**: Coming Soon
+
+## Infrastructure
 ![Validator Architecture](overview/infra-overview.png)
 
-## Solana Tesetnet validator:
-https://www.validators.app/validators/JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF?locale=en&network=testnet
+### Components
+- **Validator Server**: Primary Solana validator
+- **Home Server**: Metrics collection / visualization and running of Ethereum and Bitcoin services as they are less demanding
+- **Cold Storage**: Secure key storage solution
 
-Metrics (WIP): https://metric.seed42.co/public-dashboards/ceff27f0e3ba4434912481b5b93f96a1
+## Skills & Technologies
 
-Cold key generation and storage
-Validator server
-Monitoring / Home server 
+### General Skills
+- **Linux**: System administration, optimization, and service management
+- **SSH**: Key management, security hardening, and auditing
+- **Networking**: Routing, firewall configuration, port management
+- **Containerization**: Docker for service deployment
+
+### Blockchain Technologies
+- **Solana**: Validator operations, key management, monitoring
+- **Ethereum**: Coming soon - Validator operations, staking
+- **Bitcoin**: Coming soon - Node operations
+
+## Monitoring & Metrics
+- **Prometheus**: Metrics collection
+- **Grafana**: Visualization and dashboards
+- **Alerting**: Custom alert configurations
+
+## Other
+- **nginx**: reverse proxy and ssl certificat manavement
+- **Termius**: Local CLI for remot access to servers
 
 
 
