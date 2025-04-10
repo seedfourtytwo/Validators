@@ -1,3 +1,11 @@
+## Table of Contents
+- [Introduction](#introduction)
+- [Technologies & Concepts](#technologies--concepts)
+  - [General Skills](#general-skills)
+  - [Cryptocurrency](#cryptocurrency)
+- [Infrastructure Overview](#infrastructure-overview)
+
+
 # Validator Projects Documentation
 
 I've been in and around the Crypto space for over 4 years now and my goal is to start building in this space. This is my way of learning about new technologies and putting it into practice. (I'm starting for a fraly low technical background)
