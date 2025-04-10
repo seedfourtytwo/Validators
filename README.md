@@ -33,7 +33,7 @@ Infrastructure overview
 ## Solana Tesetnet validator:
 https://www.validators.app/validators/JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF?locale=en&network=testnet
 
-Metrics: https://metric.seed42.co/public-dashboards/ceff27f0e3ba4434912481b5b93f96a1
+Metrics (WIP): https://metric.seed42.co/public-dashboards/ceff27f0e3ba4434912481b5b93f96a1
 
 Cold key generation and storage
 Validator server
