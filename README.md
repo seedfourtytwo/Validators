@@ -1,6 +1,6 @@
-# 🛰️ Solana Validator Bare Metal Setup
+This Repo documents my various validator projects in detail
 
-This repository documents the full setup and maintenance of my home-run Solana validator node, built on bare metal hardware. It includes:
+
 
 - Complete infrastructure diagrams
 - Config files and server setups
