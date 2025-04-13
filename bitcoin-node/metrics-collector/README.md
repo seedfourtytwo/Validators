@@ -7,62 +7,83 @@ A Prometheus metrics collector for Bitcoin Core that uses cookie authentication 
 - Python 3.8+
 - Bitcoin Core running with cookie authentication enabled
 - The `bitcoin` user must have access to the Bitcoin Core cookie file
+- Root/sudo access for systemd service setup
 
 ## Installation
 
-1. Clone the repository as the bitcoin user:
+### 1. Setup Python Environment (as bitcoin user)
 ```bash
-cd /home/bitcoin
-git clone <repository-url> bitcoin-metrics
-cd bitcoin-metrics
+cd /opt/bitcoin/metrics-collector
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 ```
 
-2. Make the installation script executable:
+### 2. Configure Environment (as bitcoin user)
+Create a `.env` file with the following configuration:
 ```bash
-chmod +x install.sh
+cat > .env << EOL
+# Bitcoin RPC Configuration
+BITCOIN_RPC_HOST=127.0.0.1
+BITCOIN_RPC_PORT=8332
+
+# Cookie Authentication
+BITCOIN_COOKIE_PATH=/mnt/bitcoin-node/.cookie
+
+# Metrics Configuration
+METRICS_PORT=9332
+METRICS_HOST=0.0.0.0
+EOL
 ```
 
-3. Run the installation script as the bitcoin user:
+### 3. Create Systemd Service (as root/sudo user)
+Create the service file:
 ```bash
-./install.sh
+echo '[Unit]
+Description=Bitcoin Metrics Collector
+After=bitcoind.service
+Requires=bitcoind.service
+
+[Service]
+Type=simple
+User=bitcoin
+Group=bitcoin
+WorkingDirectory=/opt/bitcoin/metrics-collector
+Environment=PATH=/opt/bitcoin/metrics-collector/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ExecStart=/opt/bitcoin/metrics-collector/venv/bin/python src/collector.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target' | sudo tee /etc/systemd/system/bitcoin-metrics.service
 ```
 
-The script will:
-- Create a Python virtual environment
-- Install required dependencies
-- Set up a systemd user service
-- Enable the service to start on boot
-- Start the metrics collector
-
-## Configuration
-
-The collector uses cookie authentication by default. The cookie file should be located at `/mnt/bitcoin-node/.cookie` and owned by the bitcoin user.
-
-If you need to use username/password authentication instead, create a `.env` file with:
-```
-BITCOIN_RPC_USER=your_rpc_user
-BITCOIN_RPC_PASSWORD=your_rpc_password
+### 4. Enable and Start Service (as root/sudo user)
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable bitcoin-metrics.service
+sudo systemctl start bitcoin-metrics.service
 ```
 
 ## Service Management
 
-The metrics collector runs as a systemd user service under the bitcoin user. To manage the service:
+The metrics collector runs as a systemd service under the bitcoin user. To manage the service:
 
 ```bash
 # Check service status
-systemctl --user status bitcoin-metrics.service
+sudo systemctl status bitcoin-metrics.service
 
 # Stop the service
-systemctl --user stop bitcoin-metrics.service
+sudo systemctl stop bitcoin-metrics.service
 
 # Start the service
-systemctl --user start bitcoin-metrics.service
+sudo systemctl start bitcoin-metrics.service
 
 # Restart the service
-systemctl --user restart bitcoin-metrics.service
+sudo systemctl restart bitcoin-metrics.service
 
 # View logs
-journalctl --user -u bitcoin-metrics.service
+sudo journalctl -u bitcoin-metrics.service
 ```
 
 ## Metrics
@@ -82,13 +103,13 @@ The collector exposes the following metrics on port 9332:
 - The collector runs under the bitcoin user without sudo privileges
 - Cookie authentication is used by default for enhanced security
 - The service is configured to restart automatically on failure
-- The bitcoin user's lingering is enabled to ensure the service runs after logout
+- The service runs as a system service with proper user/group permissions
 
 ## Troubleshooting
 
 1. If the service fails to start, check the logs:
 ```bash
-journalctl --user -u bitcoin-metrics.service
+sudo journalctl -u bitcoin-metrics.service
 ```
 
 2. Verify the cookie file permissions:
@@ -98,88 +119,24 @@ ls -l /mnt/bitcoin-node/.cookie
 
 3. Ensure Bitcoin Core is running:
 ```bash
-systemctl status bitcoind
+sudo systemctl status bitcoind
 ```
 
 4. Check if the metrics endpoint is accessible:
 ```bash
 curl http://localhost:9332/metrics
-``` 
-=======
-# Validator Projects Documentation
-
-## Overview
-After 4years+ in the Crypto industry, it is time for me to start building. This project serves as both documentation and a learning platform for blockchain infrastructure.
-
-## Table of Contents
-- [Project Structure](#project-structure)
-- [Validator Projects](#validator-projects)
-  - [Solana Validator](#solana-validator)
-  - [Ethereum Validator (Upcoming)](#ethereum-validator)
-  - [Bitcoin Node (Upcoming)](#bitcoin-node)
-- [Infrastructure](#infrastructure)
-- [Skills & Technologies](#skills--technologies)
-- [Monitoring & Metrics](#monitoring--metrics)
-
-## Project Structure
-```
-.
-├── solana-validator/     # Solana validator documentation and configs
-├── ethereum/            # Ethereum validator documentation (upcoming)
-├── bitcoin-node/        # Bitcoin node documentation (upcoming)
-├── infrastructure/      # Infrastructure setup and configuration
-├── docs/               # General documentation
-└── overview/           # Architecture diagrams and overviews
 ```
 
-## Validator Projects
+5. Verify Python environment:
+```bash
+cd /opt/bitcoin/metrics-collector
+source venv/bin/activate
+python3 -c "import bitcoinrpc, prometheus_client, dotenv, aiohttp"
+```
 
-### Solana Validator
-- **Status**: Active on Testnet
-- **Validator Address**: [JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF](https://www.validators.app/validators/JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF?locale=en&network=testnet)
-- **Documentation**: [Solana Validator Setup](solana-validator/README.md)
-- **Metrics Dashboard**: [Validator Metrics](https://metric.seed42.co/public-dashboards/ceff27f0e3ba4434912481b5b93f96a1)
-
-### Ethereum Validator
-- **Status**: Planning Phase
-- **Documentation**: Coming Soon
-
-### Bitcoin Node
-- **Status**: Planning Phase
-- **Documentation**: Coming Soon
-
-## Infrastructure
-![Validator Architecture](overview/infra-overview.png)
-
-### Components
-- **Validator Server**: Primary Solana validator
-- **Home Server**: Metrics collection / visualization and running of Ethereum and Bitcoin services as they are less demanding
-- **Cold Storage**: Secure key storage solution
-
-## Skills & Technologies
-
-### General Skills
-- **Linux**: System administration, optimization, and service management
-- **SSH**: Key management, security hardening, and auditing
-- **Networking**: Routing, firewall configuration, port management
-- **Containerization**: Docker for service deployment
-
-### Blockchain Technologies
-- **Solana**: Validator operations, key management, monitoring
-- **Ethereum**: Coming soon - Validator operations, staking
-- **Bitcoin**: Coming soon - Node operations
-
-## Monitoring & Metrics
-- **Prometheus**: Metrics collection
-- **Grafana**: Visualization and dashboards
-- **Alerting**: Custom alert configurations
-
-## Other
-- **nginx**: reverse proxy and ssl certificat manavement
-- **Termius**: Local CLI for remot access to servers
-- **Git/Github**: Used for documentation in this case
-- **AI**: Cursor - Chat GPT - Claude Sonnet, for learning and isntructions along the way
-
-
-
->>>>>>> 816c7f661314a3b9d31560dc4a9f1ee4d63009fb
+6. Test the collector directly:
+```bash
+cd /opt/bitcoin/metrics-collector
+source venv/bin/activate
+python3 src/collector.py
+```
