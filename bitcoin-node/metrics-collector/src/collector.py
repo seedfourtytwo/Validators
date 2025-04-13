@@ -63,26 +63,53 @@ def collect_metrics():
         rpc = get_rpc_connection()
         
         # Get blockchain info
-        blockchain_info = rpc.getblockchaininfo()
-        BITCOIN_BLOCK_HEIGHT.set(blockchain_info['blocks'])
-        BITCOIN_VERIFICATION_PROGRESS.set(blockchain_info['verificationprogress'])
-        BITCOIN_DIFFICULTY.set(blockchain_info['difficulty'])
+        try:
+            blockchain_info = rpc.getblockchaininfo()
+            BITCOIN_BLOCK_HEIGHT.set(blockchain_info['blocks'])
+            BITCOIN_VERIFICATION_PROGRESS.set(blockchain_info['verificationprogress'])
+            BITCOIN_DIFFICULTY.set(blockchain_info['difficulty'])
+            print("Successfully collected blockchain metrics")
+        except Exception as e:
+            print(f"Error collecting blockchain metrics: {str(e)}")
         
         # Get mempool info
-        mempool_info = rpc.getmempoolinfo()
-        BITCOIN_MEMPOOL_SIZE.set(mempool_info['size'])
-        BITCOIN_MEMPOOL_BYTES.set(mempool_info['bytes'])
+        try:
+            mempool_info = rpc.getmempoolinfo()
+            BITCOIN_MEMPOOL_SIZE.set(mempool_info['size'])
+            BITCOIN_MEMPOOL_BYTES.set(mempool_info['bytes'])
+            print("Successfully collected mempool metrics")
+        except Exception as e:
+            print(f"Error collecting mempool metrics: {str(e)}")
         
         # Get network info
-        network_info = rpc.getnetworkinfo()
-        BITCOIN_PEER_COUNT.set(network_info['connections'])
+        try:
+            network_info = rpc.getnetworkinfo()
+            BITCOIN_PEER_COUNT.set(network_info['connections'])
+            print("Successfully collected network metrics")
+        except Exception as e:
+            print(f"Error collecting network metrics: {str(e)}")
         
         # Get memory info
-        memory_info = rpc.getmemoryinfo()
-        BITCOIN_MEMORY_USAGE.set(memory_info['used'])
+        try:
+            memory_info = rpc.getmemoryinfo()
+            print(f"Memory info response: {json.dumps(memory_info, indent=2)}")  # Debug print
+            if isinstance(memory_info, dict):
+                if 'locked' in memory_info:
+                    locked_info = memory_info['locked']
+                    if isinstance(locked_info, dict) and 'used' in locked_info:
+                        BITCOIN_MEMORY_USAGE.set(locked_info['used'])
+                        print("Successfully collected memory metrics")
+                    else:
+                        print(f"Unexpected locked info structure: {locked_info}")
+                else:
+                    print(f"Memory info keys: {memory_info.keys()}")
+            else:
+                print(f"Unexpected memory info type: {type(memory_info)}")
+        except Exception as e:
+            print(f"Error collecting memory metrics: {str(e)}")
         
     except Exception as e:
-        print(f"Error collecting metrics: {str(e)}")
+        print(f"Error in collect_metrics: {str(e)}")
 
 def run_metrics_server():
     """Run the metrics server"""

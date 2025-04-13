@@ -1,24 +1,32 @@
 #!/bin/bash
 
-# Exit on error
+# Exit on any error
 set -e
 
-# Create virtual environment
-python3 -m venv venv
-source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Create .env file if it doesn't exist
-if [ ! -f .env ]; then
-    cp .env.example .env
-    echo "Created .env file from .env.example"
-    echo "Please edit .env with your specific configuration"
+# Check if running as bitcoin user
+if [ "$(whoami)" != "bitcoin" ]; then
+    echo "This script must be run as the bitcoin user"
+    exit 1
 fi
 
-# Create systemd service file
-sudo tee /etc/systemd/system/bitcoin-metrics.service << EOF
+# Create virtual environment if it doesn't exist
+if [ ! -d "venv" ]; then
+    echo "Creating virtual environment..."
+    python3 -m venv venv
+fi
+
+# Activate virtual environment
+source venv/bin/activate
+
+# Install requirements
+echo "Installing requirements..."
+pip install -r requirements.txt
+
+# Create systemd service directory if it doesn't exist
+mkdir -p ~/.config/systemd/user/
+
+# Create the systemd service file
+cat > ~/.config/systemd/user/bitcoin-metrics.service << EOL
 [Unit]
 Description=Bitcoin Metrics Collector
 After=bitcoind.service
@@ -28,19 +36,26 @@ Requires=bitcoind.service
 Type=simple
 User=bitcoin
 Group=bitcoin
-WorkingDirectory=$(pwd)
-Environment=PATH=$(pwd)/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-ExecStart=$(pwd)/venv/bin/python src/collector.py
-Restart=on-failure
-RestartSec=5
+WorkingDirectory=/home/bitcoin/bitcoin-metrics
+Environment=PATH=/home/bitcoin/bitcoin-metrics/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ExecStart=/home/bitcoin/bitcoin-metrics/venv/bin/python src/collector.py
+Restart=always
+RestartSec=10
 
 [Install]
-WantedBy=multi-user.target
-EOF
+WantedBy=default.target
+EOL
 
-# Reload systemd and enable service
-sudo systemctl daemon-reload
-sudo systemctl enable bitcoin-metrics
-sudo systemctl start bitcoin-metrics
+# Enable lingering for the bitcoin user (allows services to run after user logout)
+sudo loginctl enable-linger bitcoin
 
-echo "Installation complete. Check status with: sudo systemctl status bitcoin-metrics" 
+# Reload systemd user daemon
+systemctl --user daemon-reload
+
+# Enable and start the service
+systemctl --user enable bitcoin-metrics.service
+systemctl --user start bitcoin-metrics.service
+
+echo "Installation complete!"
+echo "Service status:"
+systemctl --user status bitcoin-metrics.service 
