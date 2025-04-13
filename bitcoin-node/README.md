@@ -1,216 +1,167 @@
-## Bitcoin Core Full Node Setup on Linux (from Source)
+# Bitcoin Core Full Node Setup
 
-### ✅ Goal
+## Current Status ✅
 
-Deploy a production-grade, secure Bitcoin full node on a Linux server:
+- **Version**: Bitcoin Core v28.1
+- **Network**: Mainnet
+- **Sync Status**: Fully synced (99.99% verified)
+- **Block Height**: 892,246
+- **Storage**: ~741GB (Full node, not pruned)
+- **Memory Usage**: ~316MB (peak: 317.8MB)
+- **Service Status**: Active and running
+- **Peers**: Multiple v1 and v2 peers connected
 
-- Built from source with PGP verification
-    
-- Dedicated user + disk partition
-    
-- `systemd` managed
-    
-- Hardened permissions
-    
-- Syncing from Genesis block (mainnet)
-    
+## System Configuration 🖥️
 
----
-
-### 🧰 Environment
-
+### User & Directories
 - **User**: `bitcoin` (non-privileged)
-    
-- **Data directory**: `/mnt/bitcoin-node` (on dedicated HDD partition)
-    
-- **Binary install location**: `/opt/bitcoin`
-    
-- **OS**: Ubuntu Server (no desktop)
-    
-- **Firewall**: `nftables` (with P2P port 8333 opened)
-    
-
----
-
-## 1️⃣ Partitioning & Filesystem Prep
-
-Disk was partitioned with `fdisk` into two ext4 partitions:
-
-- `/mnt/archive` (5.9TB)
-    
-- `/mnt/bitcoin-node` (5TB)
-    
-
-Mounted via `/etc/fstab` with options:
-
-fstab
-
-CopyEdit
-
-`UUID=... /mnt/bitcoin-node ext4 defaults,noatime,nodiratime 0 2`
-
-Formatted with:
-
-bash
-
-CopyEdit
-
-`sudo mkfs.ext4 /dev/sdb1 sudo mkdir -p /mnt/bitcoin-node sudo chown bitcoin:bitcoin /mnt/bitcoin-node`
-
----
-
-## 2️⃣ Build Bitcoin Core from Source
-
-### 📥 Download and Verify
-
-bash
-
-CopyEdit
-
-`git clone https://github.com/bitcoin/bitcoin.git cd bitcoin git checkout v28.1 git verify-tag v28.1`
-
-Import key if needed:
-
-bash
-
-CopyEdit
-
-`gpg --keyserver hkps://keyserver.ubuntu.com --recv-keys 152812300785C96444D3334D17565732E08E5E41`
-
-### ⚙️ Build
-
-bash
-
-CopyEdit
-
-`./autogen.sh ./configure --without-gui --disable-tests --disable-bench --enable-wallet make -j$(nproc)`
-
-### 🚚 Deploy the Binaries
-
-bash
-
-CopyEdit
-
-`sudo mkdir -p /opt/bitcoin sudo cp src/bitcoind src/bitcoin-cli /opt/bitcoin/ sudo chown root:root /opt/bitcoin/* sudo chmod 755 /opt/bitcoin/*`
-
----
-
-## 3️⃣ Systemd Service
-
-Create `/etc/systemd/system/bitcoind.service`:
-
-ini
-
-CopyEdit
-
-`[Unit] Description=Bitcoin daemon After=network.target  [Service] User=bitcoin Group=bitcoin ExecStart=/opt/bitcoin/bitcoind -datadir=/mnt/bitcoin-node -nodaemon ExecStop=/opt/bitcoin/bitcoin-cli -datadir=/mnt/bitcoin-node stop Type=simple Restart=on-failure PrivateTmp=true ProtectHome=true NoNewPrivileges=true  [Install] WantedBy=multi-user.target`
-
-Then reload and start:
-
-bash
-
-CopyEdit
-
-`sudo systemctl daemon-reexec sudo systemctl daemon-reload sudo systemctl start bitcoind sudo systemctl enable bitcoind`
-
----
-
-## 4️⃣ Config File (Optional)
-
-Place at `/mnt/bitcoin-node/bitcoin.conf`:
-
-ini
-
-CopyEdit
-
-`server=1 daemon=0 txindex=1 rpcuser=bitcoinrpc rpcpassword=your_secure_password`
-
-You can generate a secure RPC password:
-
-bash
-
-CopyEdit
-
-`xxd -l 16 -p /dev/urandom`
-
----
-
-## 5️⃣ Firewall (nftables)
-
-Allow incoming P2P port (8333) + LAN-only RPC if needed:
-
-nftables
-
-CopyEdit
-
-`tcp dport 8333 accept`
-
----
-
-## 6️⃣ Monitoring Sync Progress
-
-Manual check:
-
-bash
-
-CopyEdit
-
-`bitcoin-cli -datadir=/mnt/bitcoin-node getblockchaininfo`
-
-Auto-refresh:
-
-bash
-
-CopyEdit
-
-`watch -n 10 'bitcoin-cli -datadir=/mnt/bitcoin-node getblockchaininfo | grep -E "blocks|headers|verificationprogress"'`
-
-Example output:
-
-json
-
-CopyEdit
-
-`"blocks": 32161, "headers": 891895, "verificationprogress": 0.000027,`
-
----
-
-## 📌 Notes
-
-- Full blockchain size: ~600GB+ as of 2025
-    
-- Initial sync (IBD) takes time but ensures full validation
-    
-- Node will auto-restart on failure and boot
-    
-
----
-
-## 🛡️ Security Best Practices
-
-- Binary in `/opt` for clean systemd compatibility
-    
-- Home dir for `bitcoin` is `chmod 700` (private)
-    
-- Systemd does not use symlinks or rely on $PATH
-    
-- Hardened service via:
-    
-    - `PrivateTmp`
-        
-    - `ProtectHome`
-        
-    - `NoNewPrivileges`
-        
-
----
-
-## 🔁 Maintenance & Upgrade Path
-
-To upgrade:
-
-bash
-
-CopyEdit
-
-`sudo -u bitcoin -s cd ~/bitcoin git fetch --tags git checkout v29.0 git verify-tag v29.0 make clean ./configure ... make -j$(nproc) sudo cp src/bitcoind src/bitcoin-cli /opt/bitcoin/ sudo systemctl restart bitcoind`
+- **Data Directory**: `/mnt/bitcoin-node`
+- **Binary Location**: `/opt/bitcoin`
+- **OS**: Ubuntu Server
+
+### Configuration Files
+
+#### Bitcoin Core Config (`/mnt/bitcoin-node/bitcoin.conf`)
+```ini
+# Bitcoin Core configuration
+datadir=/mnt/bitcoin-node
+
+# RPC settings
+server=1
+rpcallowip=127.0.0.1
+rpcbind=127.0.0.1
+rpcport=8332
+
+# HTTP server settings
+rest=1
+```
+
+#### Systemd Service (`/etc/systemd/system/bitcoind.service`)
+```ini
+[Unit]
+Description=Bitcoin daemon
+After=network.target
+
+[Service]
+User=bitcoin
+Group=bitcoin
+ExecStart=/opt/bitcoin/bitcoind -datadir=/mnt/bitcoin-node
+ExecStop=/opt/bitcoin/bitcoin-cli -datadir=/mnt/bitcoin-node stop
+Type=simple
+Restart=on-failure
+PrivateTmp=true
+ProtectHome=true
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target
+```
+
+### Security Features
+- Dedicated non-privileged user
+- Dedicated disk partition
+- Cookie authentication enabled
+- RPC restricted to localhost
+- Systemd service hardening:
+  - `PrivateTmp`: Isolated /tmp directory
+  - `ProtectHome`: Protected home directory
+  - `NoNewPrivileges`: Prevents privilege escalation
+
+## Monitoring & Management 🔍
+
+### Check Node Status
+```bash
+# Get blockchain info
+bitcoin-cli -datadir=/mnt/bitcoin-node getblockchaininfo
+
+# Check process status
+ps aux | grep bitcoind
+
+# View logs
+tail -f /mnt/bitcoin-node/debug.log
+
+# Check memory usage
+bitcoin-cli -datadir=/mnt/bitcoin-node getmemoryinfo
+```
+
+### Service Management
+```bash
+# Start node
+sudo systemctl start bitcoind
+
+# Stop node
+sudo systemctl stop bitcoind
+
+# Restart node
+sudo systemctl restart bitcoind
+
+# Enable on boot
+sudo systemctl enable bitcoind
+
+# Check service status
+sudo systemctl status bitcoind
+```
+
+### Data Directory Structure
+```
+/mnt/bitcoin-node/
+├── banlist.json
+├── bitcoin.conf
+├── bitcoind.pid
+├── blocks/
+├── chainstate/
+├── debug.log
+├── fee_estimates.dat
+├── mempool.dat
+├── peers.dat
+└── settings.json
+```
+
+## Metrics Collection 📊
+
+The node is configured with a custom metrics collector service that exposes metrics in Prometheus format.
+
+### Metrics Collector
+- Located in `metrics-collector/` directory
+- Runs as systemd user service under `bitcoin` user
+- Uses cookie authentication
+- Exposes metrics on port 9332
+
+## Maintenance 🔧
+
+### Upgrading Bitcoin Core
+1. Stop the service:
+```bash
+sudo systemctl stop bitcoind
+```
+
+2. Backup the data directory:
+```bash
+sudo tar -czf bitcoin-node-backup.tar.gz /mnt/bitcoin-node
+```
+
+3. Update Bitcoin Core:
+```bash
+cd ~/bitcoin
+git fetch --tags
+git checkout v29.0  # Replace with new version
+git verify-tag v29.0
+make clean
+./configure --without-gui --disable-tests --disable-bench --enable-wallet
+make -j$(nproc)
+sudo cp src/bitcoind src/bitcoin-cli /opt/bitcoin/
+```
+
+4. Restart the service:
+```bash
+sudo systemctl start bitcoind
+```
+
+## Security Notes 🛡️
+
+- Node runs under dedicated `bitcoin` user
+- RPC access restricted to localhost
+- Cookie authentication enabled
+- Systemd service includes security hardening
+- Regular backups recommended
+- Keep system and Bitcoin Core updated

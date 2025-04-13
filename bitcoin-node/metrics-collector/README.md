@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Bitcoin Metrics Collector
 
 A Prometheus metrics collector for Bitcoin Core that uses cookie authentication by default.
