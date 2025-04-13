@@ -90,8 +90,8 @@ WantedBy=multi-user.target
   - `PrivateTmp`: Isolated /tmp directory
   - `ProtectHome`: Protected home directory
   - `NoNewPrivileges`: Prevents privilege escalation
-  
-### Check Node Status
+
+### Check Node Status (run as bitcoin user)
 ```bash
 # Get blockchain info
 bitcoin-cli -datadir=/mnt/bitcoin-node getblockchaininfo
@@ -148,6 +148,12 @@ The node is configured with a custom metrics collector service that exposes metr
 - Runs as systemd user service under `bitcoin` user
 - Uses cookie authentication
 - Exposes metrics on port 9332
+
+### Dashboard
+- Public dashboard available at: https://metric.seed42.co/public-dashboards/4de1b04bbfd5466cbc7387071ae30786
+- Shows real-time metrics including:
+  - Block height
+  - More metrics coming soon...
 
 ## Maintenance 🔧
 

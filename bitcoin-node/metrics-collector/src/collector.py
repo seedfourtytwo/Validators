@@ -6,6 +6,8 @@ from pathlib import Path
 from prometheus_client import start_http_server, Gauge, Counter
 from bitcoinrpc.authproxy import AuthServiceProxy
 from dotenv import load_dotenv
+import aiohttp
+import asyncio
 
 # Load environment variables
 load_dotenv()
@@ -24,6 +26,7 @@ BITCOIN_MEMPOOL_SIZE = Gauge('bitcoin_mempool_size', 'Number of transactions in 
 BITCOIN_MEMPOOL_BYTES = Gauge('bitcoin_mempool_bytes', 'Size of mempool in bytes')
 BITCOIN_PEER_COUNT = Gauge('bitcoin_peer_count', 'Number of connected peers')
 BITCOIN_MEMORY_USAGE = Gauge('bitcoin_memory_usage_bytes', 'Memory usage in bytes')
+BITCOIN_PRICE_USD = Gauge('bitcoin_price_usd', 'Current Bitcoin price in USD')
 
 def get_rpc_connection():
     """Establish RPC connection using cookie authentication by default"""
@@ -111,13 +114,39 @@ def collect_metrics():
     except Exception as e:
         print(f"Error in collect_metrics: {str(e)}")
 
+async def get_bitcoin_price():
+    """Get Bitcoin price from Binance API"""
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT') as response:
+                if response.status == 200:
+                    data = await response.json()
+                    price = float(data['price'])
+                    BITCOIN_PRICE_USD.set(price)
+                    print(f"Successfully collected Bitcoin price: ${price:,.2f}")
+                else:
+                    print(f"Error getting Bitcoin price: HTTP {response.status}")
+    except Exception as e:
+        print(f"Error collecting Bitcoin price: {str(e)}")
+
+async def collect_metrics_async():
+    """Collect metrics asynchronously"""
+    try:
+        # Collect Bitcoin node metrics
+        collect_metrics()
+        # Collect Bitcoin price
+        await get_bitcoin_price()
+    except Exception as e:
+        print(f"Error in collect_metrics_async: {str(e)}")
+
 def run_metrics_server():
     """Run the metrics server"""
     start_http_server(METRICS_PORT)
     print(f"Starting Bitcoin metrics collector on port {METRICS_PORT}")
     
+    loop = asyncio.get_event_loop()
     while True:
-        collect_metrics()
+        loop.run_until_complete(collect_metrics_async())
         time.sleep(15)  # Collect metrics every 15 seconds
 
 if __name__ == '__main__':
