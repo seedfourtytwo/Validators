@@ -1,5 +1,9 @@
+# Home Server Documentation
 
-## 🧱 Hardware & Specs
+## 🖥️ System Overview
+This server serves as the primary infrastructure for running the Monitoring stack monitoring, a Bitcoin nodes, and Ethereum - Eigenlayer validation services.
+
+## 🧱 Hardware Specifications
 
 | Component       | Details                                   |
 |----------------|--------------------------------------------|
@@ -7,9 +11,26 @@
 | **OS**          | Ubuntu 24.04                              |
 | **CPU**         | 13th Gen Intel(R) Core(TM) i5-13500       |
 | **RAM**         | 64 GB DDR4                                |
-| **Storage**     | 2 x 12To SSD - 2 x 1TB NVMe               |
-| **Network**     | see (link to home-router)                 |
+| **Storage**     | 2 x 12TB SSD - 2 x 1TB NVMe               |
+| **Network**     | [See Home Router Configuration](../home-router/README.md) |
+
+## 🚀 Services
+
+### Currently Running
+- Monitoring Stack
+  - [Grafana](./services/graphana.md)
+  - [Prometheus](./services/prometheus.md)
+  - [Docker Infrastructure](./services/docker.md)
+- Bitcoin Infrastructure
+  - [Bitcoin Node](./services/bitcoin-node.md)
+  - [Bitcoin Node Collector](./services/bitcoin-collector.md)
+- Ethereum Infrastructure
+  - [Ethereum-Eigen Validator](./services/ethereum-eigen.md)
+
+## 📁 Directory Structure
+- `/setup-tutorials/` - Installation and setup guides
+- `/services/` - Service configurations and documentation
+- `/linux-config/` - System-level configurations
+- `/monitoring/` - Monitoring stack configurations
 
 
-This server runs the monitoring stack: Graphana + Prometheus from docker containers
-It will also be used to run an Ethereum/Eigen validator and a Bitcoin node

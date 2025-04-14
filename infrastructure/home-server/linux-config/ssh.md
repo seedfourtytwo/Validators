@@ -1,11 +1,17 @@
-For added security SSH needs to be hardened
+# SSH Configuration
 
+## Overview
+This document describes the hardened SSH configuration for the home server. The configuration focuses on security best practices.
 
-SSH configuration:
+## Configuration File
+- Location: `/etc/ssh/sshd_config.d/99-hardened.conf`
+- Purpose: Additional SSH security settings
+- Note: This file complements the main sshd_config file
 
-Config:/etc/ssh/sshd_config.d/99-hardened.conf
+## Complete Configuration
+Here's the exact configuration file that should be placed at `/etc/ssh/sshd_config.d/99-hardened.conf`:
 
-
+```bash
 # Host keys
 HostKey /etc/ssh/ssh_host_ed25519_key
 HostKey /etc/ssh/ssh_host_rsa_key
@@ -31,6 +37,174 @@ CASignatureAlgorithms sk-ssh-ed25519@openssh.com,ssh-ed25519,rsa-sha2-512,rsa-sh
 GSSAPIKexAlgorithms gss-curve25519-sha256-,gss-group16-sha512-
 HostbasedAcceptedAlgorithms sk-ssh-ed25519-cert-v01@openssh.com,ssh-ed25519-cert-v01@openssh.com,sk-ssh-ed25519@openssh.com,ssh-ed25519,rsa-sha2-512-cert-v01@openssh.com,rsa-sha2-512,rsa-sha2-256-cert-v01@openssh.com,rsa-sha2-256
 PubkeyAcceptedAlgorithms sk-ssh-ed25519-cert-v01@openssh.com,ssh-ed25519-cert-v01@openssh.com,sk-ssh-ed25519@openssh.com,ssh-ed25519,rsa-sha2-512-cert-v01@openssh.com,rsa-sha2-512,rsa-sha2-256-cert-v01@openssh.com,rsa-sha2-256
+```
 
+## Configuration Explanation
 
-Once setup, audit with: https://github.com/jtesta/ssh-audit
+### Host Keys
+- Uses both ED25519 and RSA host keys for maximum compatibility
+- ED25519 provides better security and performance
+- RSA is included for legacy support
+
+### Access Control
+- Root login is disabled for security
+- Access is restricted to users in the `sshusers` group
+- StrictModes ensures proper file permissions
+
+### Authentication
+- Password authentication is disabled
+- Only public key authentication is allowed
+- Challenge-response authentication is disabled
+
+### Session Control
+- X11 forwarding is disabled
+- Connection timeout is set to 100 seconds
+- Connection attempts are limited to prevent brute force attacks
+
+### Cryptographic Hardening
+- Uses modern, secure key exchange algorithms
+- Implements strong encryption ciphers
+- Uses secure message authentication codes
+- Supports modern host key algorithms
+- Implements secure signature algorithms
+
+## Complete Setup Guide
+
+### 1. Server Preparation
+```bash
+# Create sshusers group if it doesn't exist
+sudo groupadd sshusers
+
+# Add your user to the group
+sudo usermod -a -G sshusers $USER
+
+# Create .ssh directory with correct permissions
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+```
+
+### 2. Client-Side Setup
+
+#### Windows (Using PowerShell)
+```powershell
+# Install OpenSSH if not already installed
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+
+# Generate ED25519 key (recommended)
+ssh-keygen -t ed25519 -C "your_email@example.com"
+
+# Or generate RSA key (if needed)
+ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+
+# Keys will be saved to:
+# %USERPROFILE%\.ssh\id_ed25519 (private key)
+# %USERPROFILE%\.ssh\id_ed25519.pub (public key)
+```
+
+#### Linux/macOS
+```bash
+# Generate ED25519 key (recommended)
+ssh-keygen -t ed25519 -C "your_email@example.com"
+
+# Or generate RSA key (if needed)
+ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+
+# Keys will be saved to:
+# ~/.ssh/id_ed25519 (private key)
+# ~/.ssh/id_ed25519.pub (public key)
+```
+
+### 3. Key Transfer
+
+#### Windows (Using PowerShell)
+```powershell
+# Copy public key to server
+type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh username@server "cat >> ~/.ssh/authorized_keys"
+```
+
+#### Linux/macOS
+```bash
+# Copy public key to server
+ssh-copy-id username@server
+# Or manually:
+cat ~/.ssh/id_ed25519.pub | ssh username@server "cat >> ~/.ssh/authorized_keys"
+```
+
+### 4. Server-Side Key Setup
+```bash
+# Set correct permissions for authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+
+# Verify the key was added correctly
+cat ~/.ssh/authorized_keys
+```
+
+### 5. Testing Connection
+```bash
+# Test SSH connection
+ssh username@server
+
+# If successful, you should connect without a password prompt
+```
+
+### 6. Backup Procedures
+
+#### Client-Side Backup (Windows)
+```powershell
+# Create backup directory
+New-Item -ItemType Directory -Path "$env:USERPROFILE\ssh_backup" -Force
+
+# Copy SSH keys
+Copy-Item "$env:USERPROFILE\.ssh\*" "$env:USERPROFILE\ssh_backup\"
+
+# Export registry settings (if using Pageant or similar)
+reg export "HKEY_CURRENT_USER\Software\SimonTatham\PuTTY" "$env:USERPROFILE\ssh_backup\putty_settings.reg"
+```
+
+#### Client-Side Backup (Linux/macOS)
+```bash
+# Create backup directory
+mkdir -p ~/ssh_backup
+
+# Copy SSH keys
+cp -r ~/.ssh/* ~/ssh_backup/
+
+# Create archive with timestamp
+tar -czf ~/ssh_backup_$(date +%Y%m%d).tar.gz ~/ssh_backup/
+```
+
+#### Server-Side Backup
+```bash
+# Backup SSH configuration
+sudo cp /etc/ssh/sshd_config.d/99-hardened.conf /etc/ssh/sshd_config.d/99-hardened.conf.backup
+
+# Backup authorized keys
+cp ~/.ssh/authorized_keys ~/.ssh/authorized_keys.backup
+
+# Create full SSH backup with timestamp
+sudo tar -czf /root/ssh_backup_$(date +%Y%m%d).tar.gz /etc/ssh/ ~/.ssh/
+```
+
+### 7. Key Rotation (Every 6-12 months)
+```bash
+# Generate new key pair
+ssh-keygen -t ed25519 -C "your_email@example.com"
+
+# Copy new public key to server
+ssh-copy-id username@server
+
+# Test new key
+ssh username@server
+
+# Once confirmed working, remove old key from server
+ssh username@server "sed -i '/old_key_comment/d' ~/.ssh/authorized_keys"
+```
+
+## Security Audit
+After applying these settings, it's recommended to audit the SSH configuration using:
+```bash
+# Install ssh-audit
+git clone https://github.com/jtesta/ssh-audit.git
+cd ssh-audit
+./ssh-audit.py localhost
+```
