@@ -1,6 +1,10 @@
+# TODO List
+
+> Note: This is not a formal roadmap but rather an idea dump for future review and consideration. Items listed here are potential improvements, features, or tasks that might be worth exploring.
+
 # Project TODO List
 
-## Infrastructure Improvements
+## Potential Infrastructure Improvements
 
 ### Home Server
 - [ ] System optimization for the home server
