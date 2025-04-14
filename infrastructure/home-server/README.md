@@ -11,7 +11,7 @@ This server serves as the primary infrastructure for running the Monitoring stac
 | **OS**          | Ubuntu 24.04                              |
 | **CPU**         | 13th Gen Intel(R) Core(TM) i5-13500       |
 | **RAM**         | 64 GB DDR4                                |
-| **Storage**     | 2 x 12TB SSD - 2 x 1TB NVMe               |
+| **Storage**     | 2 x 12TB SATA - 2 x 1TB NVMe               |
 | **Network**     | [See Home Router Configuration](../home-router/README.md) |
 
 ## 🚀 Services

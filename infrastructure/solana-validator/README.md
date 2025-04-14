@@ -1,62 +1,80 @@
 # 🧬 Solana Validator
 
-Testnet Solana validator running on dedicated bare metal.
+Testnet Solana validator running on dedicated bare metal hardware with secure key management and optimized performance.
 
----
-The server is rented from https://www.fiberstate.com/ at a cost of USD 135.95/Month
+## 📊 Status & Identity
+- **Network**: Testnet
+- **Validator Identity**: [JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF](https://www.validators.app/validators/JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF?locale=en&network=testnet)
+- **Vote Account**: `3TEX5gBjcZCzAz3AYT2BQrwpDTSUd5FtszPs7yx9iGGL`
+- **Program**: [Solana Foundation Delegation Program (SFDP)](https://solana.com/foundation/delegation-program)
 
-## 🧱 Hardware & Specs
+## 🔑 Key Management
+Validator keys are managed using secure cold storage procedures:
+- [Cold Key Generation & Management](cold-key-management.md)
+- Identity and vote account keys follow BIP44 standard
 
-| Component       | Details                                   |
-|----------------|--------------------------------------------|
-| **IP Address**  | `38.97.62.158`                            |
-| **OS**          | Ubuntu 24.04                              |
-| **CPU**         | AMD Ryzen 9 7950X (16 Cores / 32 Threads) |
-| **RAM**         | 128 GB DDR5                               |
-| **Storage**     | 2 TB NVMe + 1 TB NVMe + 1 TB NVMe         |
-| **Network**     | 10 Gbps (330 TB/month usage cap)          |
+> Note: Current keys use recovery path `m/44'/501'/0'/0'`  
+> Recovery command:  
+> ```bash
+> solana-keygen recover 'prompt://?full-path=m/44'/501'/0'/0'' --outfile keypair.json
+> ```
 
----
-Ubuntu is setup and tailored specifically for Solana
- - Optimization  (link to /linux-config/optimization.md)
- - Disk setup (link to /linux-config/disk-management.md)
- - log-rotation (link to /linux-config/log-rotation.md)
+## 🧱 Hardware Specifications
+| Component | Details |
+|-----------|---------|
+| CPU | AMD Ryzen 9 7950X (16C/32T) |
+| RAM | 128 GB DDR5 |
+| Storage | 2 TB NVMe + 2x 1 TB NVMe |
+| Network | 10 Gbps (330 TB/month) |
+| Location | Fiberstate Datacenter |
 
-We are running 3 main services:
-Agave - the Solana client (link to /services/agave.md)
-Node exporter - exports live hardware information for monitoring (link to /services/node-exporter.md)
-Solana exporter - exports Solana related metrics for monitoring (link to /services/solana-exporter.md)
+## 🔧 Core Services
+- **Validator**: [Agave](services/agave.md) (Solana client)
+- **Metrics**: 
+  - [Node Exporter](services/node-exporter.md)
+  - [Solana Exporter](services/solana-exporter.md)
+  - [Public Dashboard](https://metric.seed42.co/goto/0_8z3r0HR?orgId=1)
 
-The server is behinf a firewall that only allows the needed traffic - see (link to /linux-config/firewall)
+## 🌐 Network Configuration
+| Port | Protocol | Use | Access |
+|------|----------|-----|---------|
+| 8000–10000 | UDP | TPU | Public |
+| 8899 | TCP | RPC | Local |
+| 8900 | TCP | Gossip | Public |
+| 22 | TCP | SSH | Restricted |
 
+## ⚙️ System Configuration
+- [System Optimization](linux-config/optimization.md)
+- [Disk Management](linux-config/disk-management.md)
+- [Log Rotation](linux-config/log-rotation.md)
+- [Firewall Rules](linux-config/firewall.md)
+- [SSH Configuration](linux-config/ssh.md)
+- [Users & Groups](linux-config/users-groups.md)
+- [File Structure](linux-config/file-structure.md)
 
+## 🛠️ Quick Commands
+```bash
+# Service Control
+sudo systemctl {start|stop|restart} validator.service
 
-
-
-Start stop and monitor:
-
-sudo systemctl start validator.service
-sudo systemctl stop validator.service
-sudo systemctl restart validator.service
-
-
-Once started check the status with
+# Monitoring
 agave-validator --ledger ~/ledger monitor
-and
 solana catchup --our-localhost --keypair ~/wallets/validator-identity.json
 
-Tail logs for warning with
-grep --extended-regexp 'ERROR|WARN' ~/log/validator.log
+# Log Check
+grep -E 'ERROR|WARN' ~/log/validator.log
+```
 
+## 📚 Additional Resources
+- [Setup Tutorials](../setup-tutorials/)
 
+## 🙏 Acknowledgments
+> Special thanks to [Nordstar](https://nordstar.one/) for his invaluable help and guidance on Discord in setting up this validator. 
+> Don't hesitate to delegat to them
 
-## 🌐 Network
-
-| Port        | Protocol | Use                     |
-|-------------|----------|--------------------------|
-| 8000–10000  | UDP      | TPU (Transaction layer)  |
-| 8899        | TCP      | JSON-RPC (local only)    |
-| 8900        | TCP      | Gossip                   |
-| 22          | TCP      | SSH (restricted)         |
-
-- RPC not exposed publicly
+## 🚀 Next Major Milestone
+> **Important**: The next critical step in our validator setup will be implementing MEV (Maximal Extractable Value) capabilities through JITO integration on testnet. This will enable:
+> - Enhanced block building and propagation via JITO's testnet infrastructure
+> - Access to JITO's MEV infrastructure for testing and development
+> - Integration with JITO's block builder network on testnet
+> - Testing of MEV strategies in a safe environment before mainnet deployment

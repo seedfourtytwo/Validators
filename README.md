@@ -1,27 +1,34 @@
 # Validator Projects Documentation
 
 ## Overview
-After 4years+ in the Crypto industry, it is time for me to start building. This project serves as both documentation and a learning platform for blockchain infrastructure.
+After 4years+ in the Crypto industry, it is time for me to start building. This project serves as my first learning platform for blockchain infrastructure.
+
+## Infrastructure Overview
+![Validator Infrastructure Overview](infra-overview.png)
 
 ## Table of Contents
 - [Project Structure](#project-structure)
 - [Validator Projects](#validator-projects)
   - [Solana Validator](#solana-validator)
   - [Ethereum Validator (Upcoming)](#ethereum-validator)
-  - [Bitcoin Node (Upcoming)](#bitcoin-node)
+  - [Bitcoin Node](#bitcoin-node)
 - [Infrastructure](#infrastructure)
-- [Skills & Technologies](#skills--technologies)
+- [Skills & Technologies used](#skills--technologies)
 - [Monitoring & Metrics](#monitoring--metrics)
+- [Resources & References](#resources--references)
 
 ## Project Structure
 ```
 .
-├── solana-validator/     # Solana validator documentation and configs
-├── ethereum/            # Ethereum validator documentation (upcoming)
-├── bitcoin-node/        # Bitcoin node documentation (upcoming)
-├── infrastructure/      # Infrastructure setup and configuration
-├── docs/               # General documentation
-└── overview/           # Architecture diagrams and overviews
+├── infrastructure/
+│   ├── solana-validator/    # Solana validator documentation and configs
+│   ├── ethereum/           # Ethereum & EigenLayer validator documentation
+│   ├── bitcoin-node/      # Bitcoin node documentation
+│   ├── home-server/       # Home server setup and services
+│   └── home-router/       # Network and routing configuration
+├── resources/            # Documentation, guides, and references
+├── infra-overview.png    # Infrastructure overview diagram
+└── todo.md              # List of things to improve
 ```
 
 ## Validator Projects
@@ -29,26 +36,32 @@ After 4years+ in the Crypto industry, it is time for me to start building. This 
 ### Solana Validator
 - **Status**: Active on Testnet
 - **Validator Address**: [JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF](https://www.validators.app/validators/JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF?locale=en&network=testnet)
-- **Documentation**: [Solana Validator Setup](solana-validator/README.md)
-- **Metrics Dashboard**: [Validator Metrics](https://metric.seed42.co/public-dashboards/ceff27f0e3ba4434912481b5b93f96a1)
+- **Documentation**: [Solana Validator Setup](infrastructure/solana-validator/README.md)
+- **Metrics Dashboard**: [Validator Metrics](https://metric.seed42.co/goto/0_8z3r0HR?orgId=1) (Work in Progress)
+- **Next Steps**: JITO MEV Integration on Testnet
 
 ### Ethereum Validator
 - **Status**: Planning Phase
-- **Documentation**: Coming Soon
+- **Documentation**: [Ethereum & EigenLayer Setup](infrastructure/ethereum/README.md)
+- **Focus**: EigenLayer Integration for AVS Support
 
 ### Bitcoin Node
-- **Status**: Planning Phase
-- **Documentation**: Coming Soon
+- **Status**: Active (Basic setup)
+- **Documentation**: [Bitcoin Node Setup](infrastructure/bitcoin-node/README.md)
+- **Metrics Dashboard**: [Node Metrics](https://metric.seed42.co/public-dashboards/4de1b04bbfd5466cbc7387071ae30786)
 
 ## Infrastructure
-![Validator Architecture](overview/infra-overview.png)
 
 ### Components
-- **Validator Server**: Primary Solana validator
-- **Home Server**: Metrics collection / visualization and running of Ethereum and Bitcoin services as they are less demanding
-- **Cold Storage**: Secure key storage solution
+- **Validator Server**: Primary Solana validator (Fiberstate Data Center)
+- **Home Server**: 
+  - Metrics collection & visualization
+  - Bitcoin node
+  - Ethereum services (planned)
+  - Prometheus & Grafana
+- **Cold Storage**: Secure key generation and storage solution
 
-## Skills & Technologies
+## Skills & Technologies used
 
 ### General Skills
 - **Linux**: System administration, optimization, and service management
@@ -58,19 +71,22 @@ After 4years+ in the Crypto industry, it is time for me to start building. This 
 
 ### Blockchain Technologies
 - **Solana**: Validator operations, key management, monitoring
-- **Ethereum**: Coming soon - Validator operations, staking
-- **Bitcoin**: Coming soon - Node operations
+- **Ethereum**: Coming soon - Validator operations with EigenLayer integration
+- **Bitcoin**: Node operations and monitoring
 
 ## Monitoring & Metrics
-- **Prometheus**: Metrics collection
-- **Grafana**: Visualization and dashboards
-- **Alerting**: Custom alert configurations
+- **Prometheus**: Metrics collection and storage
+- **Grafana**: Visualization and public dashboards
+- **Alerting**: Custom alert configurations for validator health
 
-## Other
-- **nginx**: reverse proxy and ssl certificat manavement
-- **Termius**: Local CLI for remot access to servers
-- **Git/Github**: Used for documentation in this case
-- **AI**: Cursor - Chat GPT - Claude Sonnet, for learning and isntructions along the way
+## Tools & Services
+- **nginx**: Reverse proxy and SSL certificate management
+- **Termius**: Local CLI for remote server access
+- **Git/Github**: Documentation and configuration management
+- **AI Assistance**: Cursor, ChatGPT, Claude Sonnet - for development and documentation support
 
+## Resources & References
+For a comprehensive list of resources, tools, and references used in this project, please see [Resources Documentation](resources/README.md).
 
+contact me: contact@seed42.co
 

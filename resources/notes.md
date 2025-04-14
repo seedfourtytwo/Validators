@@ -1,11 +1,7 @@
-https://github.com/asymmetric-research/solana-exporter
-https://github.com/prometheus/node_exporter
-https://github.com/anza-xyz/agave
-https://github.com/prometheus/prometheus
+Below is some more system tuning to explore for the Solana validator given by https://nordstar.one/
 
-https://github.com/grafana/grafana
-
-https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/7/html/performance_tuning_guide/chap-red_hat_enterprise_linux-performance_tuning_guide-tuned#tuned-plugins
+```bash
+# Performance Tuning Profile for Solana Validator
 [main]
 summary=Solana validator system tuning
 
@@ -35,11 +31,9 @@ kernel.numa_balancing=0
 
 [bootloader]
 cmdline=ipv6.disable=1 amd_pstate=active pcie_aspm=off pcie_port_pm=off iommu=pt
+```
 
-
-
-
-
-https://solanahcl.org/#faq
-
-https://github.com/jtesta/ssh-audit
+### Reference Documentation
+| Resource | Description | Link |
+|----------|-------------|------|
+| Red Hat Tuned | Comprehensive guide for system tuning and optimization | [Red Hat Performance Tuning Guide](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/7/html/performance_tuning_guide/chap-red_hat_enterprise_linux-performance_tuning_guide-tuned#tuned-plugins) |
