@@ -100,7 +100,7 @@ File: `/etc/nginx/sites-available/grafana`
 ```nginx
 server {
     listen 443 ssl;
-    server_name 77.200.151.32;
+    server_name [home ip];
 
     ssl_certificate     /etc/nginx/ssl/grafana.crt;
     ssl_certificate_key /etc/nginx/ssl/grafana.key;
@@ -180,7 +180,7 @@ The current configuration does not include an explicit HTTP to HTTPS redirection
 # Add this server block to /etc/nginx/sites-available/grafana
 server {
     listen 80;
-    server_name 77.200.151.32;
+    server_name [home ip];
     return 301 https://$server_name$request_uri;
 }
 ```
@@ -205,7 +205,7 @@ sudo openssl req -x509 -nodes -days 365 \
   -newkey rsa:2048 \
   -keyout /etc/nginx/ssl/grafana.key \
   -out /etc/nginx/ssl/grafana.crt \
-  -subj "/CN=77.200.151.32"
+  -subj "/CN=[home ip]"
 ```
 
 ### Let's Encrypt Certificate (Future)
@@ -214,7 +214,7 @@ sudo openssl req -x509 -nodes -days 365 \
 sudo apt install certbot python3-certbot-nginx
 
 # Obtain certificate
-sudo certbot --nginx -d 77.200.151.32
+sudo certbot --nginx -d [home ip]
 
 # Auto-renewal is configured by default
 ```
@@ -306,5 +306,5 @@ sudo systemctl status nginx
 sudo netstat -tulpn | grep nginx
 
 # Test SSL configuration
-curl -vI https://77.200.151.32
+curl -vI https://[home ip]
 ```
