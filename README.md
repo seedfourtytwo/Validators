@@ -48,7 +48,7 @@ After 4years+ in the Crypto industry, it is time for me to start building. This 
 ### Bitcoin Node
 - **Status**: Active (Basic setup)
 - **Documentation**: [Bitcoin Node Setup](infrastructure/bitcoin-node/README.md)
-- **Metrics Dashboard**: [Node Metrics](https://metric.seed42.co/public-dashboards/4de1b04bbfd5466cbc7387071ae30786)
+- **Metrics Dashboard**: [Node Metrics](https://metric.seed42.co/public-dashboards/4de1b04bbfd5466cbc7387071ae30786?from=now-1h&to=now)
 
 ## Infrastructure
 
