@@ -64,9 +64,9 @@ table inet filter {
     tcp dport 8000 accept        # Gossip TCP
 
     # Restricted Access Services
-    tcp dport 8899 ip saddr { 77.200.151.32 } accept  # RPC
-    tcp dport 9100 ip saddr { 77.200.151.32 } accept  # Solana Exporter
-    tcp dport 9110 ip saddr { 77.200.151.32 } accept  # Node Exporter
+    tcp dport 8899 ip saddr { [home ip] } accept  # RPC
+    tcp dport 9100 ip saddr { [home ip] } accept  # Solana Exporter
+    tcp dport 9110 ip saddr { [home ip] } accept  # Node Exporter
 
     # Management Access
     tcp dport 22 ct state new limit rate 12/minute accept  # SSH
@@ -109,7 +109,7 @@ table inet filter {
 - Default policy: DROP
 - Established connections: ACCEPT
 - Loopback traffic: ACCEPT
-- Home IP (77.200.151.32) allowed for:
+- Home IP ([home ip]) allowed for:
   - RPC access
   - Metrics collection
   - Monitoring

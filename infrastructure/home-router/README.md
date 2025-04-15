@@ -1,7 +1,7 @@
 # Home Router Configuration
 
 ## Network Information
-- External IP: 77.200.151.32
+- External IP: [home ip]
 - Internal IP: 192.168.1.1
 - Provider: SFR
 - Network Performance:
