@@ -161,10 +161,18 @@ Note: These indexes require additional disk space (~30GB for txindex, ~2GB for c
 - Exposes metrics on port 9332
 
 ### Dashboard
-- Public dashboard available at: https://metric.seed42.co/public-dashboards/4de1b04bbfd5466cbc7387071ae30786
+- Public dashboard available at: https://metric.seed42.co/public-dashboards/4de1b04bbfd5466cbc7387071ae30786?from=now-1h&to=now
 - Shows real-time metrics including:
   - Block height
-  - More metrics coming soon...
+  - Network difficulty
+  - Mempool size and transactions
+  - Network connections
+  - UTXO set statistics
+  - Transaction fees (low, medium, high)
+  - Blockchain size
+  - Network bandwidth
+
+The complete Grafana dashboard configuration is available in `../home-server/services/grafana/bitcoin-node-dashboard.json`. You can import this file directly into your Grafana instance to set up the dashboard.
 
 ## Maintenance 🔧
 

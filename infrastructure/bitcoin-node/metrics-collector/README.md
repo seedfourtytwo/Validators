@@ -113,6 +113,8 @@ The collector exposes the following metrics on port 9332:
 - `bitcoin_utxo_count`: Total number of unspent transaction outputs
 - `bitcoin_utxo_size_bytes`: Total size of UTXO set in bytes
 
+Note: UTXO metrics are collected every 5 minutes to minimize system impact. The initial collection starts 15 seconds after service startup, and each collection typically takes about 1 minute to complete. Regular metrics continue to update every 15 seconds independently of UTXO collection.
+
 ### System Metrics
 - `bitcoin_memory_usage_bytes`: Memory usage in bytes
 - `bitcoin_size_on_disk_bytes`: Total blockchain size on disk in bytes
@@ -134,39 +136,59 @@ The collector exposes the following metrics on port 9332:
 
 - The collector runs under the bitcoin user without sudo privileges
 - Cookie authentication is used by default for enhanced security
+- RPC connection is cached to minimize authentication overhead
 - The service is configured to restart automatically on failure
 - The service runs as a system service with proper user/group permissions
+
+## Collection Intervals
+
+The collector operates with different intervals for different metric types:
+- Regular metrics (blockchain, mempool, network, etc.): Every 15 seconds
+- UTXO metrics: Every 5 minutes
+- Bitcoin price: Every 15 seconds with regular metrics
+
+The collection processes run in parallel, ensuring that long-running UTXO collection does not block other metrics updates.
 
 ## Troubleshooting
 
 1. If the service fails to start, check the logs:
 ```bash
+# View all logs
 sudo journalctl -u bitcoin-metrics.service
+
+# Follow logs in real-time
+sudo journalctl -u bitcoin-metrics.service -f
 ```
 
-2. Verify the cookie file permissions:
+2. Understanding the log prefixes:
+- `[RPC]`: RPC connection related messages
+- `[Metrics]`: Regular metrics collection
+- `[UTXO]`: UTXO statistics collection
+- `[Startup]`: Service startup messages
+
+3. Verify the cookie file permissions:
 ```bash
 ls -l /mnt/bitcoin-node/.cookie
 ```
 
-3. Ensure Bitcoin Core is running:
+4. Ensure Bitcoin Core is running:
 ```bash
 sudo systemctl status bitcoind
 ```
 
-4. Check if the metrics endpoint is accessible:
+5. Check if the metrics endpoint is accessible:
 ```bash
 curl http://localhost:9332/metrics
 ```
 
-5. Verify Python environment:
+6. Verify Python environment:
 ```bash
 cd /opt/bitcoin/metrics-collector
 source venv/bin/activate
 python3 -c "import bitcoinrpc, prometheus_client, dotenv, aiohttp"
 ```
 
-6. Test the collector directly:
+7. Test the collector directly:
 ```bash
 cd /opt/bitcoin/metrics-collector
 source venv/bin/activate
