@@ -263,12 +263,11 @@ async def collect_regular_metrics():
             outbound = 0
             
             for peer in peers_info:
-                if (peer.get('inbound', False) or 
-                    peer.get('connection_type', '') == 'inbound' or 
-                    peer.get('addr_relay_enabled', False)):
-                    inbound += 1
-                else:
+                connection_type = peer.get('connection_type', '')
+                if connection_type in ['outbound-full-relay', 'block-relay-only']:
                     outbound += 1
+                elif connection_type == 'inbound':
+                    inbound += 1
             
             BITCOIN_CONN_INBOUND.set(inbound)
             BITCOIN_CONN_OUTBOUND.set(outbound)
