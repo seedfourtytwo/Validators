@@ -161,7 +161,7 @@ Note: These indexes require additional disk space (~30GB for txindex, ~2GB for c
 - Exposes metrics on port 9332
 
 ### Dashboard
-- Public dashboard available at: https://metric.seed42.co/public-dashboards/4de1b04bbfd5466cbc7387071ae30786?from=now-1h&to=now
+- Public dashboard available at: https://metric.seed42.co/public-dashboards/4de1b04bbfd5466cbc7387071ae30786?from=now-15m&to=now&refresh=15s
 - Shows real-time metrics including:
   - Block height
   - Network difficulty

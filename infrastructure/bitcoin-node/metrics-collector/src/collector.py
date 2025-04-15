@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 import aiohttp
 import asyncio
 from decimal import Decimal
+import sys
 
 # Load environment variables
 load_dotenv()
@@ -164,16 +165,63 @@ async def collect_regular_metrics():
         # Get blockchain info
         try:
             blockchain_info = rpc.getblockchaininfo()
-            BITCOIN_BLOCK_HEIGHT.set(blockchain_info['blocks'])
+            current_height = blockchain_info['blocks']
+            BITCOIN_BLOCK_HEIGHT.set(current_height)
             BITCOIN_VERIFICATION_PROGRESS.set(blockchain_info['verificationprogress'])
             BITCOIN_DIFFICULTY.set(blockchain_info['difficulty'])
             BITCOIN_SIZE_ON_DISK.set(blockchain_info['size_on_disk'])
             
-            # Get latest block time
-            latest_block_hash = rpc.getbestblockhash()
-            latest_block = rpc.getblock(latest_block_hash)
-            time_since_last_block = time.time() - latest_block['time']
-            BITCOIN_TIME_SINCE_LAST_BLOCK.set(time_since_last_block)
+            # Simplified block time calculation with consistent UTC/UNIX timestamps
+            try:
+                # Get latest block info
+                latest_block_hash = rpc.getbestblockhash()
+                latest_block = rpc.getblock(latest_block_hash)
+                
+                # Get last 6 blocks for interval history
+                block_times = []
+                current_hash = latest_block_hash
+                for _ in range(6):  # Last 6 blocks is enough for recent history
+                    if current_hash:
+                        block = rpc.getblock(current_hash)
+                        # Block times from Bitcoin Core are already in UNIX timestamp format
+                        block_times.append(block['time'])
+                        current_hash = block.get('previousblockhash')
+                
+                # Get current time in UNIX timestamp (UTC)
+                current_time = int(time.time())
+                
+                # Calculate metrics using pure UNIX timestamps
+                if len(block_times) >= 2:
+                    # Time since last block (in seconds)
+                    time_since_last = current_time - block_times[0]  # block_times[0] is the latest block
+                    BITCOIN_TIME_SINCE_LAST_BLOCK.set(time_since_last)
+                    
+                    # Calculate intervals for the last 5 block pairs
+                    for i in range(len(block_times)-1):
+                        interval = block_times[i] - block_times[i+1]
+                        # Create gauge if it doesn't exist
+                        gauge_name = f'BITCOIN_BLOCK_INTERVAL_{i+1}'
+                        if not hasattr(sys.modules[__name__], gauge_name):
+                            setattr(sys.modules[__name__], gauge_name, 
+                                  Gauge(f'bitcoin_block_interval_{i+1}_seconds', 
+                                       f'Time between block {i+1} and {i+2} in seconds'))
+                        # Set the value
+                        getattr(sys.modules[__name__], gauge_name).set(interval)
+                    
+                    # Enhanced logging with all intervals
+                    log_msg = f"[Metrics] Block times - Current UTC: {time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(current_time))}, "
+                    log_msg += f"Last Block UTC: {time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(block_times[0]))}, "
+                    log_msg += f"Time Since: {time_since_last:.1f}s\n"
+                    log_msg += "Block intervals:\n"
+                    for i in range(len(block_times)-1):
+                        interval = block_times[i] - block_times[i+1]
+                        log_msg += f"Block {i+1} to {i+2}: {interval:.1f}s ({interval/60:.1f}min)\n"
+                    print(log_msg, flush=True)
+                else:
+                    print(f"[Metrics] Warning: Not enough blocks to calculate intervals", flush=True)
+            except Exception as e:
+                print(f"Error calculating block time: {str(e)}", flush=True)
+                
             print("[Metrics] Successfully collected blockchain metrics", flush=True)
         except Exception as e:
             print(f"[Metrics] Error collecting blockchain metrics: {str(e)}", flush=True)
@@ -242,10 +290,6 @@ async def collect_regular_metrics():
                 BITCOIN_BLOCK_SIZE_MEAN.set(avg_size)
                 BITCOIN_BLOCK_TXS_MEAN.set(avg_txs)
                 
-                if len(block_stats) >= 2:
-                    last_interval = block_stats[-1]['time'] - block_stats[-2]['time']
-                    BITCOIN_BLOCK_INTERVAL.set(last_interval)
-                    
             print("[Metrics] Successfully collected block stats", flush=True)
         except Exception as e:
             print(f"[Metrics] Error collecting block stats: {str(e)}", flush=True)
