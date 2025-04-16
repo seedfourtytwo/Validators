@@ -1,7 +1,7 @@
 # Validator Projects Documentation
 
 ## Overview
-After 4years+ in the Crypto industry, it is time for me to start building. This project serves as my first learning platform for blockchain infrastructure.
+This project serves as my first learning platform for blockchain infrastructure.
 
 ## Infrastructure Overview
 ![Validator Infrastructure Overview](infra-overview.png)
@@ -38,7 +38,8 @@ After 4years+ in the Crypto industry, it is time for me to start building. This 
 - **Validator Address**: [JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF](https://www.validators.app/validators/JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF?locale=en&network=testnet)
 - **Documentation**: [Solana Validator Setup](infrastructure/solana-validator/README.md)
 - **Metrics Dashboard**: [Validator Metrics](https://metric.seed42.co/goto/0_8z3r0HR?orgId=1) (Work in Progress)
-- **Next Steps**: JITO MEV Integration on Testnet
+- **Features**: JITO MEV Integration for enhanced block building and MEV rewards
+- **Next Steps**: Optimize MEV performance and monitoring
 
 ### Ethereum Validator
 - **Status**: Planning Phase
@@ -70,7 +71,7 @@ After 4years+ in the Crypto industry, it is time for me to start building. This 
 - **Containerization**: Docker for service deployment
 
 ### Blockchain Technologies
-- **Solana**: Validator operations, key management, monitoring
+- **Solana**: Validator operations, key management, monitoring, MEV optimization with JITO
 - **Ethereum**: Coming soon - Validator operations with EigenLayer integration
 - **Bitcoin**: Node operations and monitoring
 

@@ -29,10 +29,12 @@ Validator keys are managed using secure cold storage procedures:
 | Location | Fiberstate Datacenter |
 
 ## 🔧 Core Services
-- **Validator**: [Agave](services/agave.md) (Solana client)
+- **Validator**: [JITO](services/jito.md) (Solana client with MEV capabilities)
+- **Previous Implementation**: [Agave](services/agave.md) (Standard Solana client)
 - **Metrics**: 
-  - [Node Exporter](services/node-exporter.md)
-  - [Solana Exporter](services/solana-exporter.md)
+  - [Node Exporter](services/monitoring/node-exporter.md)
+  - [Solana Exporter](services/monitoring/solana-exporter.md)
+  - [Metrics Reference](services/monitoring/metrics-reference.md)
   - [Public Dashboard](https://metric.seed42.co/goto/0_8z3r0HR?orgId=1)
 
 ## 🌐 Network Configuration
@@ -57,24 +59,36 @@ Validator keys are managed using secure cold storage procedures:
 # Service Control
 sudo systemctl {start|stop|restart} validator.service
 
+# Switch between JITO and Agave
+sudo sed -i 's/VALIDATOR_TYPE=jito/VALIDATOR_TYPE=agave/' /etc/default/validator  # Switch to Agave
+sudo sed -i 's/VALIDATOR_TYPE=agave/VALIDATOR_TYPE=jito/' /etc/default/validator  # Switch to JITO
+sudo systemctl restart validator.service
+
 # Monitoring
-agave-validator --ledger ~/ledger monitor
-solana catchup --our-localhost --keypair ~/wallets/validator-identity.json
+grep -a "tip" /home/sol/validators/data/log/validator.log | grep "payment"  # Check JITO MEV activity
+solana catchup --url https://api.testnet.solana.com JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF  # Check catchup status
+curl -s -X POST -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","id":1, "method":"getBlockHeight"}' http://localhost:8899  # Check local height
+/home/sol/validators/jito/active --ledger /home/sol/validators/data/ledger monitor  # Monitor validator directly
 
 # Log Check
-grep -E 'ERROR|WARN' ~/log/validator.log
+grep -E 'ERROR|WARN' /home/sol/validators/data/log/validator.log
+tail -f /home/sol/validators/data/log/validator.log
+
+# Metrics
+curl -s localhost:9100/metrics | grep solana_validator_active_stake  # Check active stake
 ```
 
 ## 📚 Additional Resources
-- [Setup Tutorials](../setup-tutorials/)
+- [Setup Tutorials](setup-tutorials/)
+- [JITO Configuration Guide](services/jito.md)
 
 ## 🙏 Acknowledgments
 > Special thanks to [Nordstar](https://nordstar.one/) for his invaluable help and guidance on Discord in setting up this validator. 
-> Don't hesitate to delegat to them
+> Don't hesitate to delegate to them.
 
 ## 🚀 Next Major Milestone
-> **Important**: The next critical step in our validator setup will be implementing MEV (Maximal Extractable Value) capabilities through JITO integration on testnet. This will enable:
-> - Enhanced block building and propagation via JITO's testnet infrastructure
-> - Access to JITO's MEV infrastructure for testing and development
-> - Integration with JITO's block builder network on testnet
-> - Testing of MEV strategies in a safe environment before mainnet deployment
+- **Important**: Having successfully implemented JITO MEV capabilities on our testnet validator, our next focus is:
+- Optimizing MEV rewards through enhanced monitoring and performance tuning
+- Preparing for potential mainnet deployment with increased stake
+- Implementing advanced alerting for MEV opportunities and performance metrics
+- Exploring additional validator services and infrastructure improvements

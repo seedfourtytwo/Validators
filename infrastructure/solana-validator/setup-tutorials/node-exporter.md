@@ -14,7 +14,7 @@
 
 Node Exporter is a Prometheus exporter for hardware and OS metrics. It collects various system metrics and exposes them in Prometheus format, making them available for monitoring and alerting. This guide provides step-by-step instructions for setting up Node Exporter on your Solana validator server.
 
-This tutorial is based on the existing Node Exporter configuration found in the [services/node-exporter.md](../services/node-exporter.md) file.
+This tutorial is based on the existing Node Exporter configuration found in the [services/monitoring/node-exporter.md](../services/monitoring/node-exporter.md) file.
 
 ## Prerequisites
 

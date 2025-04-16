@@ -12,6 +12,7 @@ Solana Exporter is a Prometheus exporter for Solana blockchain metrics. It colle
 - **Listen Address**: 0.0.0.0:9100
 - **Server IP**: 38.97.62.158
 - **Access Restriction**: Only accessible from home IP address for security
+- **Binary Location**: /home/sol/validators/monitoring/solana-exporter/solana-exporter
 
 ## Purpose
 Solana Exporter serves several critical functions for the Solana validator:
@@ -33,9 +34,10 @@ After=network.target
 [Service]
 User=sol
 WorkingDirectory=/home/sol
-ExecStart=/home/sol/solana-exporter/solana-exporter \
+ExecStart=/home/sol/validators/monitoring/solana-exporter/solana-exporter \
   -rpc-url http://127.0.0.1:8899 \
-  -listen-address 0.0.0.0:9100
+  -listen-address 0.0.0.0:9100 \
+  -nodekey JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF
 Restart=always
 RestartSec=3
 
@@ -50,6 +52,7 @@ The Solana Exporter is started with the following options:
 |--------|-------------|
 | `-rpc-url http://127.0.0.1:8899` | URL of the Solana RPC endpoint |
 | `-listen-address 0.0.0.0:9100` | Listen address for the metrics endpoint |
+| `-nodekey JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF` | Validator identity public key to monitor |
 
 ## Metrics
 
@@ -180,7 +183,7 @@ To update Solana Exporter to a new version:
 
 2. Update the code:
    ```bash
-   cd /home/sol
+   cd /home/sol/validators/monitoring
    git pull https://github.com/asymmetric-research/solana-exporter.git
    cd solana-exporter
    go build
@@ -208,6 +211,7 @@ curl -s 38.97.62.158:9100/metrics | grep -E "solana_block_height|solana_epoch|so
    - Verify permissions on the solana-exporter binary
    - Check for port conflicts
    - Ensure the Solana RPC endpoint is accessible
+   - Verify the `-nodekey` parameter is correct (not `-identity`)
 
 2. **Missing Metrics**
    - Verify that the Solana RPC endpoint is responding

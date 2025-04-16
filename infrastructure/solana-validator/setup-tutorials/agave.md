@@ -1,3 +1,11 @@
+# ⚠️ DEPRECATED - Agave Validator Setup Guide ⚠️
+
+> **WARNING**: This setup guide is now deprecated as we have moved to using JITO for our validator implementation.
+> For the current validator setup, please see [JITO Validator Setup Guide](./jito.md).
+> This documentation is kept for reference purposes only.
+
+---
+
 # Agave Validator Setup Guide
 
 ## Table of Contents

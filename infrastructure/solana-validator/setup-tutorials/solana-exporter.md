@@ -14,7 +14,7 @@
 
 Solana Exporter is a Prometheus exporter for Solana blockchain metrics. It collects various Solana-specific metrics and exposes them in Prometheus format, making them available for monitoring and alerting. This guide provides step-by-step instructions for setting up Solana Exporter on your Solana validator server.
 
-This tutorial is based on the existing Solana Exporter configuration found in the [services/solana-exporter.md](../services/solana-exporter.md) file.
+This tutorial is based on the existing Solana Exporter configuration found in the [services/monitoring/solana-exporter.md](../services/monitoring/solana-exporter.md) file.
 
 ## Prerequisites
 
@@ -24,7 +24,8 @@ Before starting, ensure you have:
 - The `sol` user created and configured as described in the Linux setup tutorial
 - Go programming language installed (version 1.16 or later)
 - Basic understanding of systemd service management
-- A running Solana validator with RPC access
+- A running Solana validator (JITO) with RPC access
+- Your validator's public key (identity)
 
 ## Installation
 
@@ -52,10 +53,10 @@ go version
 su - sol
 
 # Create directory for the exporter
-mkdir -p ~/solana-exporter
+mkdir -p ~/validators/monitoring
 
 # Clone the repository
-git clone https://github.com/asymmetric-research/solana-exporter.git ~/solana-exporter
+git clone https://github.com/asymmetric-research/solana-exporter.git ~/validators/monitoring/solana-exporter
 ```
 
 ### Build the Exporter Binary
@@ -64,13 +65,13 @@ git clone https://github.com/asymmetric-research/solana-exporter.git ~/solana-ex
 
 ```bash
 # Navigate to the exporter directory
-cd ~/solana-exporter
+cd ~/validators/monitoring/solana-exporter
 
 # Build the exporter
-go build -o ~/solana-exporter/solana-exporter
+go build
 
 # Verify it built correctly
-~/solana-exporter/solana-exporter --help
+./solana-exporter --help
 ```
 
 ## Configuration
@@ -80,10 +81,14 @@ go build -o ~/solana-exporter/solana-exporter
 **Run as: sol user**
 
 ```bash
-# Run the exporter for testing
-~/solana-exporter/solana-exporter \
+# Get your validator identity public key (if you don't already have it)
+solana-keygen pubkey ~/validators/secure/wallets/validator-identity.json
+
+# Run the exporter for testing with your validator identity
+~/validators/monitoring/solana-exporter/solana-exporter \
   -rpc-url http://127.0.0.1:8899 \
-  -listen-address 0.0.0.0:9100
+  -listen-address 0.0.0.0:9100 \
+  -nodekey JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF
 ```
 
 You should see output similar to:
@@ -150,9 +155,10 @@ After=network.target
 [Service]
 User=sol
 WorkingDirectory=/home/sol
-ExecStart=/home/sol/solana-exporter/solana-exporter \
+ExecStart=/home/sol/validators/monitoring/solana-exporter/solana-exporter \
   -rpc-url http://127.0.0.1:8899 \
-  -listen-address 0.0.0.0:9100
+  -listen-address 0.0.0.0:9100 \
+  -nodekey JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF
 Restart=always
 RestartSec=3
 
@@ -172,6 +178,7 @@ The Solana Exporter is started with the following options:
 |--------|-------------|
 | `-rpc-url http://127.0.0.1:8899` | URL of the Solana RPC endpoint |
 | `-listen-address 0.0.0.0:9100` | Listen address for the metrics endpoint |
+| `-nodekey JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF` | Validator identity public key to monitor |
 
 ## Verification
 
@@ -217,6 +224,7 @@ curl -s http://localhost:9100/metrics | grep -E "solana_block_height|solana_epoc
    - Verify permissions on the solana-exporter binary
    - Check for port conflicts
    - Ensure the Solana RPC endpoint is accessible
+   - Verify the `-nodekey` parameter is correct (not `-identity`)
 
 2. **Missing Metrics**
    - Verify that the Solana RPC endpoint is responding
@@ -226,7 +234,7 @@ curl -s http://localhost:9100/metrics | grep -E "solana_block_height|solana_epoc
 3. **Permission Errors**
    - Ensure the sol user has proper permissions:
      ```bash
-     sudo chown -R sol:sol ~/solana-exporter
+     sudo chown -R sol:sol ~/validators/monitoring/solana-exporter
      ```
 
 4. **Port Already in Use**
@@ -276,9 +284,9 @@ To update Solana Exporter to a new version:
 
 2. Update the code:
    ```bash
-   cd ~/solana-exporter
+   cd ~/validators/monitoring/solana-exporter
    git pull https://github.com/asymmetric-research/solana-exporter.git
-   go build -o ~/solana-exporter/solana-exporter
+   go build
    ```
 
 3. Start the service:

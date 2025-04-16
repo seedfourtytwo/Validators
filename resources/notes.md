@@ -1,4 +1,4 @@
-Below is some more system tuning to explore for the Solana validator given by https://nordstar.one/
+Below are some more system tuning to explore for the Solana validator given by https://nordstar.one/
 
 ```bash
 # Performance Tuning Profile for Solana Validator
