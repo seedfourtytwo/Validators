@@ -35,7 +35,7 @@ Validator keys are managed using secure cold storage procedures:
   - [Node Exporter](services/monitoring/node-exporter.md)
   - [Solana Exporter](services/monitoring/solana-exporter.md)
   - [Metrics Reference](services/monitoring/metrics-reference.md)
-  - [Public Dashboard](https://metric.seed42.co/goto/0_8z3r0HR?orgId=1)
+  - [Public Dashboard](https://metric.seed42.co/public-dashboards/94ca941675e947cb877619494cf95d80)
 
 ## 🌐 Network Configuration
 | Port | Protocol | Use | Access |

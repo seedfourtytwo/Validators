@@ -37,7 +37,7 @@ This project serves as my first learning platform for blockchain infrastructure.
 - **Status**: Active on Testnet
 - **Validator Address**: [JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF](https://www.validators.app/validators/JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF?locale=en&network=testnet)
 - **Documentation**: [Solana Validator Setup](infrastructure/solana-validator/README.md)
-- **Metrics Dashboard**: [Validator Metrics](https://metric.seed42.co/goto/0_8z3r0HR?orgId=1) (Work in Progress)
+- **Metrics Dashboard**: [Validator Metrics](https://metric.seed42.co/public-dashboards/94ca941675e947cb877619494cf95d80) (Work in Progress)
 - **Features**: JITO MEV Integration for enhanced block building and MEV rewards
 - **Next Steps**: Optimize MEV performance and monitoring
 
