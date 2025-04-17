@@ -419,7 +419,7 @@ async def get_bitcoin_price():
     """Get Bitcoin price from Binance API"""
     try:
         async with aiohttp.ClientSession() as session:
-            async with session.get('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT') as response:
+            async with session.get('https://api.binance.us/api/v3/ticker/price?symbol=BTCUSD') as response:
                 if response.status == 200:
                     data = await response.json()
                     price = float(data['price'])
