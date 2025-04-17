@@ -10,25 +10,25 @@
 ## Monitoring Stack
 
 ### Core Components
-| Tool | Description | Documentation | GitHub |
-|------|-------------|---------------|---------|
-| Prometheus | Time series database and monitoring system | [Official Docs](https://prometheus.io/docs/introduction/overview/) | [prometheus/prometheus](https://github.com/prometheus/prometheus) |
-| Grafana | Data visualization and alerting | [Getting Started](https://grafana.com/docs/grafana/latest/getting-started/) | [grafana/grafana](https://github.com/grafana/grafana) |
-| Node Exporter | System metrics collector | [Documentation](https://prometheus.io/docs/guides/node-exporter/) | [prometheus/node_exporter](https://github.com/prometheus/node_exporter) |
+| Tool | Description | Documentation | Source |
+|------|-------------|---------------|--------|
+| Prometheus | Time series database and monitoring system | [Prometheus Documentation](https://prometheus.io/docs/introduction/overview/){:target="_blank"} | [prometheus/GitHub](https://github.com/prometheus/prometheus){target="blank"} |
+| Grafana | Data visualization and alerting | [Grafana Documentation](https://grafana.com/docs/){:target="_blank"} | [grafana/GitHub](https://github.com/grafana/grafana){target="blank"} |
+| Node Exporter | System metrics collector | [Node Exporter Documentation](https://prometheus.io/docs/guides/node-exporter/){target="blank"} | [prometheus/node_exporter](https://github.com/prometheus/node_exporter){target="blank"} |
 
 ### Blockchain-Specific Exporters
 | Tool | Purpose | Link |
 |------|---------|------|
-| Solana Exporter | Validator metrics collection | [asymmetric-research/solana-exporter](https://github.com/asymmetric-research/solana-exporter) |
-| Bitcoin Exporter | Bitcoin node metrics | [jvstein/bitcoin-prometheus-exporter](https://github.com/jvstein/bitcoin-prometheus-exporter) |
-| Ethereum Exporter | ETH node & validator metrics | [31z4/ethereum-prometheus-exporter](https://github.com/31z4/ethereum-prometheus-exporter) |
+| Solana Exporter | Solana metrics collector | [Solana Exporter Documentation](https://github.com/mrgnlabs/solana-exporter){:target="_blank"} |
+| Bitcoin Exporter | Bitcoin metrics collector | [jvstein/bitcoin-prometheus-exporter](https://github.com/jvstein/bitcoin-prometheus-exporter) |
+| Ethereum Exporter | Ethereum metrics collector | [31z4/ethereum-prometheus-exporter](https://github.com/31z4/ethereum-prometheus-exporter) |
 
 ## Blockchain Infrastructure
 
 ### Solana Resources
 | Resource | Description | Link |
 |----------|-------------|------|
-| Validator Requirements | Official hardware & software requirements | [docs.solana.com](https://docs.solana.com/running-validator/validator-reqs) |
+| Hardware Requirements | Solana validator requirements | [solana.com/running-validator/validator-reqs](https://solana.com/running-validator/validator-reqs) |
 | Agave Requirements | Agave validator requirements | [docs.anza.xyz](https://docs.anza.xyz/operations/requirements) |
 | Hardware Compatibility | Solana Hardware Compatibility List | [solanahcl.org](https://solanahcl.org/) |
 | RPC API Documentation | Solana RPC HTTP API reference | [solana.com/docs/rpc/http](https://solana.com/docs/rpc/http) |
@@ -38,20 +38,20 @@
 ### Solana Tutorials & Guides
 | Guide | Description | Link |
 |-------|-------------|------|
-| Building from Source | Comprehensive guide for building Solana | [Building Solana](https://github.com/agjell/sol-tutorials/blob/master/building-solana-from-source.md) |
-| Agave Guide | Beginner's guide to Agave validator | [Agave Guide](https://github.com/agjell/sol-tutorials/blob/master/agave-beginners-guide.md) |
+| Building from Source | Build Solana from source code | [Building from Source](https://github.com/agjell/sol-tutorials/blob/master/building-solana-from-source.md) |
+| Agave Guide | Agave validator setup guide | [Agave Guide](https://github.com/agjell/sol-tutorials/blob/master/agave-beginners-guide.md) |
 
 ### Example Dashboards
 | Dashboard | Description | Link |
 |-----------|-------------|------|
-| Nordstar Dashboard | Reference Grafana dashboard setup | [metric.andre.boo](https://metric.andre.boo/public-dashboards/b97d2afafc7444c9bcd90f094114e432) |
+| Nordstar Dashboard | Reference Grafana dashboard setup | [Grafana Dashboard](https://grafana.com/grafana/dashboards/b97d2afafc7444c9bcd90f094114e432) |
 
 ## System Administration
 
 ### Linux Configuration
 | Resource | Description | Link |
 |----------|-------------|------|
-| Performance Tuning | Red Hat system tuning guide | [Red Hat Tuning Guide](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/7/html/performance_tuning_guide/chap-red_hat_enterprise_linux-performance_tuning_guide-tuned#ch-Tuned-overview) |
+| Performance Tuning | Linux performance tuning | [Red Hat Tuning Guide](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/monitoring_and_managing_system_status_and_performance/getting-started-with-tuned_monitoring-and-managing-system-status-and-performance#ch-Tuned-overview) |
 
 ### Infrastructure Tools
 | Tool | Description | Link |
@@ -64,13 +64,13 @@
 |---------|-------------|------|
 | OVH | Domain registration and management | [ovh.com](https://www.ovh.com/) |
 | Fiberstate | Bare metal server hosting | [fiberstate.com](https://www.fiberstate.com/) |
-| WebHostingTalk Deals | Server rental opportunities | [webhostingtalk.com/deals](https://www.webhostingtalk.com/forumdisplay.php?f=36) |
+| LowEndTalk | Server hosting discussion | [lowendtalk.com/forumdisplay.php?f=36](https://www.lowendtalk.com/forumdisplay.php?f=36) |
 
 ## Security
 
 ### Security Tools
-| Tool | Description | Link |
-|------|-------------|------|
+| Tool | Description | Source |
+|------|-------------|--------|
 | SSH Audit | SSH configuration analyzer | [jtesta/ssh-audit](https://github.com/jtesta/ssh-audit) |
 | Lynis | Security auditing tool | [CISOfy/lynis](https://github.com/CISOfy/lynis) |
 | RKHunter | Rootkit detection | [rkhunter docs](https://rkhunter.sourceforge.net/) |
@@ -81,7 +81,7 @@
 |----------|-------------|------|
 | Linux Server Security | Comprehensive guide | [Security Guide](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server) |
 | SSH Hardening | OpenSSH security guide | [Mozilla SSH Guidelines](https://infosec.mozilla.org/guidelines/openssh) |
-| Key Management | Best practices for key storage | [docs.solana.com/running-validator/validator-keys](https://docs.solana.com/running-validator/validator-keys) |
+| Key Management | Solana key management guide | [solana.com/running-validator/validator-keys](https://solana.com/running-validator/validator-keys) |
 
 ## Community Resources
 
@@ -100,4 +100,9 @@
 | Validators App | Validator performance | [validators.app](https://www.validators.app/) |
 | EtherScan | Ethereum network explorer | [etherscan.io](https://etherscan.io/) |
 | Mempool Space | Bitcoin mempool visualization | [mempool.space](https://mempool.space/) |
+
+## 📊 Metrics Reference
+- [Solana Validator Metrics](https://docs.solana.com/developing/network/validating/validator-monitoring#metrics){:target="_blank"}
+- [Prometheus Metrics Best Practices](https://prometheus.io/docs/practices/naming/){:target="_blank"}
+- [Grafana Dashboard Best Practices](https://grafana.com/docs/grafana/latest/dashboards/best-practices/){:target="_blank"}
 
