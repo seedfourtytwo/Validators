@@ -6,7 +6,7 @@ Testnet Solana validator running on dedicated bare metal hardware with secure ke
 - **Network**: Testnet
 - **Validator Identity**: [JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF](https://www.validators.app/validators/JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF?locale=en&network=testnet) 🔗
 - **Vote Account**: `3TEX5gBjcZCzAz3AYT2BQrwpDTSUd5FtszPs7yx9iGGL`
-- **Program**: [Solana Foundation Delegation Program (SFDP)](https://solana.com/foundation/delegation-program) 🔗
+- **Program**: [Solana Foundation Delegation Program (SFDP)](https://solana.com/foundation/delegation-program)
 
 ## 🔑 Key Management
 Validator keys are managed using secure cold storage procedures:
@@ -35,7 +35,7 @@ Validator keys are managed using secure cold storage procedures:
   - [Node Exporter](services/monitoring/node-exporter.md)
   - [Solana Exporter](services/monitoring/solana-exporter.md)
   - [Metrics Reference](services/monitoring/metrics-reference.md)
-  - [Public Dashboard](https://metric.seed42.co/public-dashboards/94ca941675e947cb877619494cf95d80) 🔗
+  - [Public Dashboard](https://metric.seed42.co/public-dashboards/94ca941675e947cb877619494cf95d80)
 
 ## 🌐 Network Configuration
 | Port | Protocol | Use | Access |

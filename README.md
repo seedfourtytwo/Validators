@@ -1,25 +1,6 @@
 # 🌐 Validators
 
 Infrastructure and configuration for running blockchain validators.
-
-## 🔄 Current Validators
-
-### 🌞 Solana Testnet Validator
-- **Network**: Testnet
-- **Status**: Active
-- **Validator**: [JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF](https://www.validators.app/validators/JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF?locale=en&network=testnet)
-- **Vote Account**: `3TEX5gBjcZCzAz3AYT2BQrwpDTSUd5FtszPs7yx9iGGL`
-- **Metrics Dashboard**: [Validator Metrics](https://metric.seed42.co/public-dashboards/94ca941675e947cb877619494cf95d80) (Work in Progress)
-- **Skip Rate**: [Skip Rate Graph](https://metric.seed42.co/d/30786?from=now-15m&to=now&refresh=15s)
-
-### 🔷 Ethereum Node
-- **Network**: Mainnet
-- **Status**: Planned
-- **Implementation**: Geth
-- **Type**: Full Node
-- **Metrics Dashboard**: [Node Metrics](https://metric.seed42.co/public-dashboards/4de1b04bbfd5466cbc7387071ae30786?from=now-15m&to=now&refresh=15s)
-
-## Overview
 This project serves as my first learning platform for blockchain infrastructure.
 
 ## Infrastructure Overview
@@ -50,7 +31,7 @@ This project serves as my first learning platform for blockchain infrastructure.
 └── todo.md              # List of things to improve
 ```
 
-## Validator Projects
+## 🔄 Current Validators
 
 ### Solana Validator
 - **Status**: Active on Testnet
