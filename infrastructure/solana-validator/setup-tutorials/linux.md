@@ -278,11 +278,8 @@ At this point, you have a basic server setup with essential security measures an
 
 2. Run an SSH audit to verify your configuration:
    ```bash
-   # Install ssh-audit
-   git clone https://github.com/jtesta/ssh-audit.git
-   cd ssh-audit
-   
-   # Run the audit
+   git clone https://github.com/arthepsy/ssh-audit.git ~/validators/monitoring/ssh-audit
+   cd ~/validators/monitoring/ssh-audit
    ./ssh-audit.py server-ip
    ```
 

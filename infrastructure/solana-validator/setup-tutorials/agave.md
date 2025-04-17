@@ -26,8 +26,8 @@
 This guide provides step-by-step instructions for setting up an Agave validator on your Linux server. Agave is a Solana validator implementation forked from the official Solana validator, designed to provide enhanced performance and reliability.
 
 This tutorial is based on the following resources:
-- [Building Solana from Source](https://github.com/agjell/sol-tutorials/blob/master/building-solana-from-source.md)
-- [Agave Beginners Guide](https://github.com/agjell/sol-tutorials/blob/master/agave-beginners-guide.md)
+- [Building from source](https://docs.solana.com/running-validator/validator-software#building-from-source)
+- [Agave Beginners Guide](https://docs.agaveos.io/en/latest/getting-started/index.html)
 
 ## Prerequisites
 
