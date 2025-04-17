@@ -15,73 +15,133 @@
       }
     ]
   },
-  "description": "local",
+  "description": "Local Bitcoin core node",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": 21,
   "links": [],
+  "liveNow": true,
   "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 19,
+      "panels": [],
+      "title": "Bitcoin & Blockchain Metrics",
+      "type": "row"
+    },
     {
       "datasource": {
         "uid": "eeidlz2biblkwd"
       },
-      "description": "BTC Price from Binance API",
+      "description": "BTC Price from Binance API - Last 6 Hrs",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "thresholds",
+            "seriesBy": "last"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "hue",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "decimals": 2,
+          "fieldMinMax": false,
           "mappings": [],
+          "noValue": "No price, BTC must be dead!",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-blue"
+                "color": "blue"
               }
             ]
-          }
+          },
+          "unit": "currencyUSD"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
-        "w": 5,
+        "h": 6,
+        "w": 9,
         "x": 0,
-        "y": 0
+        "y": 1
       },
+      "hideTimeOverride": true,
       "id": 2,
+      "interval": "15s",
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
+        "legend": {
           "calcs": [
-            "lastNotNull"
+            "lastNotNull",
+            "min",
+            "max",
+            "diffperc"
           ],
-          "fields": "",
-          "values": false
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "sortBy": "Name",
+          "sortDesc": false
         },
-        "showPercentChange": false,
-        "text": {},
-        "textMode": "value",
-        "wideLayout": true
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
       },
       "pluginVersion": "11.6.0",
       "targets": [
         {
           "editorMode": "code",
           "expr": "bitcoin_price_usd",
-          "legendFormat": "__auto",
+          "legendFormat": "Price in USD",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "BTC Price in USD",
-      "type": "stat"
+      "timeFrom": "6h",
+      "title": "BTC Price in $",
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -112,10 +172,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
+        "h": 6,
         "w": 5,
-        "x": 5,
-        "y": 0
+        "x": 9,
+        "y": 1
       },
       "id": 1,
       "options": {
@@ -157,12 +217,17 @@
         "type": "prometheus",
         "uid": "eeidlz2biblkwd"
       },
+      "description": "In Trillions times harder than at genesis.",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "fixedColor": "green",
+            "mode": "fixed"
           },
+          "decimals": 4,
           "mappings": [],
+          "max": 130,
+          "min": 110,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -176,18 +241,19 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
-        "w": 6,
-        "x": 10,
-        "y": 0
+        "h": 6,
+        "w": 10,
+        "x": 14,
+        "y": 1
       },
+      "hideTimeOverride": true,
       "id": 4,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
         "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
+        "orientation": "horizontal",
+        "percentChangeColorMode": "same_as_value",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -204,12 +270,14 @@
         {
           "editorMode": "code",
           "expr": "bitcoin_difficulty",
-          "legendFormat": "__auto",
+          "format": "time_series",
+          "legendFormat": " ",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Network Difficulty (in Trillions x harder than at genesys)",
+      "timeFrom": "13d",
+      "title": "Network Difficulty ",
       "type": "stat"
     },
     {
@@ -217,13 +285,56 @@
         "type": "prometheus",
         "uid": "eeidlz2biblkwd"
       },
+      "description": "The drops are blocks being mined, you can compare the timing (in UTC) the the last mined blocks.",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "fixedColor": "blue",
+            "mode": "fixed",
+            "seriesBy": "last"
           },
-          "decimals": 0,
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "left",
+            "axisSoftMax": 50000,
+            "axisSoftMin": 0,
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "fieldMinMax": false,
           "mappings": [],
+          "noValue": "Could not fetch any transactions",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -231,72 +342,87 @@
                 "color": "green"
               },
               {
-                "color": "green",
-                "value": 5000
+                "color": "yellow",
+                "value": 50000
               },
               {
-                "color": "#EAB839",
-                "value": 15000
+                "color": "orange",
+                "value": 100000
               },
               {
                 "color": "red",
-                "value": 15001
+                "value": 150000
+              },
+              {
+                "color": "dark-purple",
+                "value": 500000
               }
             ]
-          }
+          },
+          "unit": "none"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
-        "w": 7,
+        "h": 6,
+        "w": 9,
         "x": 0,
-        "y": 5
+        "y": 7
       },
+      "hideTimeOverride": true,
       "id": 5,
       "interval": "15s",
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
+        "legend": {
           "calcs": [
-            "lastNotNull"
+            "lastNotNull",
+            "min",
+            "max",
+            "median"
           ],
-          "fields": "",
-          "values": false
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
         },
-        "showPercentChange": true,
-        "textMode": "auto",
-        "wideLayout": true
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
       },
       "pluginVersion": "11.6.0",
       "targets": [
         {
           "editorMode": "code",
+          "exemplar": false,
           "expr": "bitcoin_mempool_size",
-          "legendFormat": "__auto",
+          "format": "time_series",
+          "interval": "15s",
+          "legendFormat": "Unconfirmed transations",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Mempool Transactions",
-      "type": "stat"
+      "timeFrom": "2h",
+      "title": "Unconfirmed Txs in mempool",
+      "type": "timeseries"
     },
     {
       "datasource": {
         "type": "prometheus",
         "uid": "eeidlz2biblkwd"
       },
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
           "decimals": 2,
+          "fieldMinMax": false,
           "mappings": [],
+          "max": 300,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -304,35 +430,47 @@
                 "color": "green"
               },
               {
-                "color": "green",
+                "color": "yellow",
                 "value": 100
               },
               {
-                "color": "#EAB839",
-                "value": 300
+                "color": "orange",
+                "value": 200
               },
               {
                 "color": "red",
-                "value": 301
+                "value": 300
+              }
+            ]
+          },
+          "unit": "MB"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": " In Block"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "vB"
               }
             ]
           }
-        },
-        "overrides": []
+        ]
       },
       "gridPos": {
-        "h": 5,
-        "w": 6,
-        "x": 7,
-        "y": 5
+        "h": 6,
+        "w": 4,
+        "x": 9,
+        "y": 7
       },
       "id": 6,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
+        "minVizHeight": 75,
+        "minVizWidth": 75,
         "orientation": "auto",
-        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -340,22 +478,35 @@
           "fields": "",
           "values": false
         },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
       },
       "pluginVersion": "11.6.0",
       "targets": [
         {
           "editorMode": "code",
           "expr": "bitcoin_mempool_bytes / (1024 * 1024)",
-          "legendFormat": "__auto",
+          "legendFormat": "Size once in block",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "bitcoin_mempool_usage / (1024 * 1024)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Size while in RAM",
+          "range": true,
+          "refId": "B"
         }
       ],
-      "title": "Mempool Size (in MB)",
-      "type": "stat"
+      "title": "Mempool Size - Max 300MB",
+      "type": "gauge"
     },
     {
       "datasource": {
@@ -369,8 +520,10 @@
             "mode": "thresholds"
           },
           "decimals": 0,
+          "fieldMinMax": false,
           "mappings": [],
           "min": 0,
+          "noValue": "No data",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -392,11 +545,12 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
-        "w": 8,
+        "h": 6,
+        "w": 11,
         "x": 13,
-        "y": 5
+        "y": 7
       },
+      "hideTimeOverride": true,
       "id": 3,
       "interval": "15s",
       "options": {
@@ -407,9 +561,9 @@
           "placement": "bottom",
           "showLegend": false
         },
-        "maxVizHeight": 300,
-        "minVizHeight": 16,
-        "minVizWidth": 8,
+        "maxVizHeight": 148,
+        "minVizHeight": 35,
+        "minVizWidth": 25,
         "namePlacement": "auto",
         "orientation": "auto",
         "reduceOptions": {
@@ -419,7 +573,7 @@
           "fields": "",
           "values": false
         },
-        "showUnfilled": true,
+        "showUnfilled": false,
         "sizing": "auto",
         "valueMode": "color"
       },
@@ -427,8 +581,12 @@
       "targets": [
         {
           "editorMode": "code",
+          "exemplar": false,
           "expr": "bitcoin_time_since_last_block_seconds / 60",
-          "legendFormat": "Last block",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "last blk",
           "range": true,
           "refId": "A"
         },
@@ -441,7 +599,7 @@
           "expr": "bitcoin_block_interval_1_seconds / 60",
           "hide": false,
           "instant": false,
-          "legendFormat": "Prev block",
+          "legendFormat": "-1 blk",
           "range": true,
           "refId": "B"
         },
@@ -454,7 +612,7 @@
           "expr": "bitcoin_block_interval_2_seconds / 60",
           "hide": false,
           "instant": false,
-          "legendFormat": "Prev block",
+          "legendFormat": "-2 blks",
           "range": true,
           "refId": "C"
         },
@@ -467,7 +625,7 @@
           "expr": "bitcoin_block_interval_3_seconds / 60",
           "hide": false,
           "instant": false,
-          "legendFormat": "Prev block",
+          "legendFormat": "-3 blks",
           "range": true,
           "refId": "D"
         },
@@ -480,7 +638,7 @@
           "expr": "bitcoin_block_interval_4_seconds / 60",
           "hide": false,
           "instant": false,
-          "legendFormat": "Prev block",
+          "legendFormat": "-4 blks",
           "range": true,
           "refId": "E"
         },
@@ -493,12 +651,12 @@
           "expr": "bitcoin_block_interval_5_seconds / 60",
           "hide": false,
           "instant": false,
-          "legendFormat": "Prev block",
+          "legendFormat": "-5blks",
           "range": true,
           "refId": "F"
         }
       ],
-      "timeFrom": "now-15m",
+      "timeFrom": "2m",
       "title": "Time between Blocks",
       "type": "bargauge"
     },
@@ -507,155 +665,141 @@
         "type": "prometheus",
         "uid": "eeidlz2biblkwd"
       },
+      "description": "Unspent Transaction Outputs.",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "fixedColor": "blue",
+            "mode": "fixed"
           },
-          "decimals": 1,
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "hue",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 3,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 2,
+          "fieldMinMax": false,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
                 "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
-          }
+          },
+          "unit": "short"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
-        "w": 4,
+        "h": 6,
+        "w": 9,
         "x": 0,
-        "y": 10
+        "y": 13
       },
-      "id": 7,
+      "hideTimeOverride": true,
+      "id": 16,
+      "interval": "15m",
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
+        "legend": {
           "calcs": [
-            "lastNotNull"
+            "lastNotNull",
+            "diffperc"
           ],
-          "fields": "",
-          "values": false
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
         },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
       },
       "pluginVersion": "11.6.0",
       "targets": [
         {
           "editorMode": "code",
-          "expr": "bitcoin_fee_low",
-          "legendFormat": "__auto",
+          "exemplar": false,
+          "expr": "bitcoin_utxo_count",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Total UTXOs currently in the set",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Low fee (~6 Blocks) sat/vB",
-      "type": "stat"
+      "timeFrom": "5h",
+      "title": "Total UTXO count",
+      "type": "timeseries"
     },
     {
       "datasource": {
         "type": "prometheus",
         "uid": "eeidlz2biblkwd"
       },
+      "description": "Size of the total UTXO set.",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
-          "decimals": 1,
+          "decimals": 2,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "yellow"
+                "color": "blue"
               }
             ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 4,
-        "y": 10
-      },
-      "id": 8,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "11.6.0",
-      "targets": [
-        {
-          "editorMode": "code",
-          "expr": "bitcoin_fee_medium",
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Medium fee (~3 Blocks) sat/vB",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "eeidlz2biblkwd"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
           },
-          "decimals": 1,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "orange"
-              }
-            ]
-          }
+          "unit": "bytes"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 8,
-        "y": 10
+        "h": 6,
+        "w": 6,
+        "x": 9,
+        "y": 13
       },
-      "id": 9,
+      "hideTimeOverride": true,
+      "id": 15,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -676,14 +820,22 @@
       "pluginVersion": "11.6.0",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
           "editorMode": "code",
-          "expr": "bitcoin_fee_high",
+          "expr": "bitcoin_utxo_size_bytes",
+          "hide": false,
+          "instant": false,
+          "interval": "15m",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "High fee (Next Blocks) sat/vB",
+      "timeFrom": "5h",
+      "title": "UTXO Set size",
       "type": "stat"
     },
     {
@@ -694,7 +846,8 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "fixedColor": "blue",
+            "mode": "fixed"
           },
           "decimals": 2,
           "mappings": [],
@@ -711,10 +864,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 12,
-        "y": 10
+        "h": 6,
+        "w": 9,
+        "x": 15,
+        "y": 13
       },
       "id": 10,
       "options": {
@@ -752,95 +905,234 @@
         "type": "prometheus",
         "uid": "eeidlz2biblkwd"
       },
+      "description": "Block time average is 10min. Should get include within the next 6 block with this. Changes over 24hrs.",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 3,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 2,
+          "decimals": 0,
           "mappings": [],
+          "min": 0,
+          "noValue": "Is it free?!",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "blue"
+              },
+              {
+                "color": "#EAB839",
+                "value": 10
+              },
+              {
+                "color": "orange",
+                "value": 20
+              },
+              {
+                "color": "red",
+                "value": 50
               }
             ]
           },
-          "unit": "short"
+          "unit": "sats/vB"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
-        "w": 6,
+        "h": 3,
+        "w": 5,
         "x": 0,
-        "y": 13
+        "y": 19
       },
-      "id": 16,
-      "interval": "15s",
+      "hideTimeOverride": true,
+      "id": 18,
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "same_as_value",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
         },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
+        "showPercentChange": true,
+        "textMode": "value",
+        "wideLayout": true
       },
       "pluginVersion": "11.6.0",
       "targets": [
         {
           "editorMode": "code",
-          "exemplar": false,
-          "expr": "bitcoin_utxo_count",
-          "format": "time_series",
-          "instant": false,
-          "interval": "",
-          "legendFormat": " UTXOs",
+          "expr": "bitcoin_fee_low",
+          "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Total UTXOs",
-      "type": "timeseries"
+      "timeFrom": "now-24h",
+      "title": "Low fee (~6 blocks) sat/vB",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eeidlz2biblkwd"
+      },
+      "description": "Block time average is 10min. Should get include within the next 3 blocks. Changes over 24hrs.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "min": 0,
+          "noValue": "Is it free?!",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue"
+              },
+              {
+                "color": "#EAB839",
+                "value": 10
+              },
+              {
+                "color": "orange",
+                "value": 20
+              },
+              {
+                "color": "red",
+                "value": 50
+              }
+            ]
+          },
+          "unit": "sats/vB"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 5,
+        "x": 5,
+        "y": 19
+      },
+      "hideTimeOverride": true,
+      "id": 17,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "same_as_value",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": true,
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "bitcoin_fee_medium",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "timeFrom": "now-24h",
+      "title": "Medium fee (~3 blocks) sat/vB",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eeidlz2biblkwd"
+      },
+      "description": "Block time average is 10min. Should get include into the next block with this. Changes over 24hrs.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "min": 0,
+          "noValue": "Is it free?!",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue"
+              },
+              {
+                "color": "#EAB839",
+                "value": 10
+              },
+              {
+                "color": "orange",
+                "value": 20
+              },
+              {
+                "color": "red",
+                "value": 50
+              }
+            ]
+          },
+          "unit": "sats/vB"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 5,
+        "x": 10,
+        "y": 19
+      },
+      "hideTimeOverride": true,
+      "id": 9,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "same_as_value",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": true,
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "bitcoin_fee_high",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "timeFrom": "now-24h",
+      "title": "High fee (Next Blocks) sat/vB",
+      "type": "stat"
     },
     {
       "datasource": {
@@ -852,29 +1144,33 @@
           "color": {
             "mode": "thresholds"
           },
+          "fieldMinMax": false,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
                 "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
               }
             ]
-          },
-          "unit": "bytes"
+          }
         },
         "overrides": []
       },
       "gridPos": {
         "h": 3,
-        "w": 3,
-        "x": 6,
-        "y": 13
+        "w": 9,
+        "x": 15,
+        "y": 19
       },
-      "id": 15,
+      "id": 20,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
+        "colorMode": "none",
+        "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
         "percentChangeColorMode": "standard",
@@ -886,26 +1182,24 @@
           "values": false
         },
         "showPercentChange": false,
-        "textMode": "auto",
+        "textMode": "value",
         "wideLayout": true
       },
       "pluginVersion": "11.6.0",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eeidlz2biblkwd"
-          },
           "editorMode": "code",
-          "expr": "bitcoin_utxo_size_bytes",
-          "hide": false,
+          "exemplar": false,
+          "expr": "bitcoin_version_number",
+          "format": "time_series",
           "instant": false,
+          "interval": "",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "UTXO Set size",
+      "title": "Bitcoin Core version",
       "type": "stat"
     },
     {
@@ -914,7 +1208,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 18
+        "y": 22
       },
       "id": 12,
       "panels": [],
@@ -926,6 +1220,7 @@
         "type": "prometheus",
         "uid": "eeidlz2biblkwd"
       },
+      "description": "0 Inbound is normal as we currently do not allow them.\n10 Outbount is the set max.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -949,21 +1244,13 @@
             ]
           }
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "bitcoin_connections_inbound {__name__=\"bitcoin_connections_inbound\", instance=\"localhost:9332\", job=\"bitcoin-node\"}"
-            },
-            "properties": []
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 8,
         "w": 7,
         "x": 0,
-        "y": 19
+        "y": 23
       },
       "id": 13,
       "options": {
@@ -1008,7 +1295,7 @@
           "refId": "B"
         }
       ],
-      "title": "Network Stats",
+      "title": "Peers connected to this node",
       "type": "gauge"
     },
     {
@@ -1025,6 +1312,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
+            "axisGridShow": false,
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1047,7 +1335,7 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
+            "showPoints": "never",
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -1106,10 +1394,10 @@
         ]
       },
       "gridPos": {
-        "h": 7,
-        "w": 11,
+        "h": 8,
+        "w": 12,
         "x": 7,
-        "y": 19
+        "y": 23
       },
       "id": 14,
       "options": {
@@ -1165,9 +1453,13 @@
     "from": "now-15m",
     "to": "now"
   },
-  "timepicker": {},
+  "timepicker": {
+    "refresh_intervals": [
+      "15s"
+    ]
+  },
   "timezone": "utc",
   "title": "Bitcoin node",
   "uid": "beit2j8p9lp8ge",
-  "version": 41
+  "version": 172
 }

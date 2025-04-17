@@ -376,17 +376,6 @@ sudo systemctl status validator
    - Check the log file for errors
    - The service is configured to restart automatically
 
-4. **Environment Variable Expansion Issues**
-   - If you see errors like `exit-code 203/EXEC` in systemd status, systemd may not be properly expanding the environment variable in your ExecStart command
-   - Fix by modifying the ExecStart line to use a bash wrapper: `ExecStart=/bin/bash -c '/home/sol/validators/scripts/start-${VALIDATOR_TYPE}-validator.sh'`
-   - After editing, run:
-     ```bash
-     sudo systemctl daemon-reload
-     sudo systemctl restart validator
-     ```
-   - Ensure all required JITO parameters are included in your start script
-   - Verify the binary is a JITO binary with `--version` flag
-
 ### Log Analysis
 To analyze the validator log:
 ```bash

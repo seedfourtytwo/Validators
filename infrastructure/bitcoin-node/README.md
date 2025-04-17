@@ -108,6 +108,9 @@ tail -f /mnt/bitcoin-node/debug.log
 
 # Check memory usage
 bitcoin-cli -datadir=/mnt/bitcoin-node getmemoryinfo
+
+# Check Bitcoin Core version
+bitcoin-cli -datadir=/mnt/bitcoin-node getnetworkinfo | grep -E "version|subversion"
 ```
 
 ### Service Management (as super user)
@@ -163,6 +166,7 @@ Note: These indexes require additional disk space (~30GB for txindex, ~2GB for c
 ### Dashboard
 - Public dashboard available at: https://metric.seed42.co/public-dashboards/4de1b04bbfd5466cbc7387071ae30786?from=now-15m&to=now&refresh=15s
 - Shows real-time metrics including:
+  - Bitcoin Core version (v28.1)
   - Block height
   - Network difficulty
   - Mempool size and transactions
@@ -171,6 +175,14 @@ Note: These indexes require additional disk space (~30GB for txindex, ~2GB for c
   - Transaction fees (low, medium, high)
   - Blockchain size
   - Network bandwidth
+
+### Version Tracking
+The metrics collector tracks the following version information:
+- Full Bitcoin Core version string
+- Major, minor, and patch version numbers
+- Formatted version number for display (e.g., "28.1")
+
+This allows for easy monitoring of the node's version and helps ensure timely updates.
 
 The complete Grafana dashboard configuration is available in `../home-server/services/grafana/bitcoin-node-dashboard.json`. You can import this file directly into your Grafana instance to set up the dashboard.
 

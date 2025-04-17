@@ -98,6 +98,15 @@ The collector exposes the following metrics on port 9332:
 - `bitcoin_verification_progress`: Blockchain verification progress
 - `bitcoin_difficulty`: Current mining difficulty
 
+### Version Metrics
+- `bitcoin_version_info`: Bitcoin Core version information (with version as a label)
+- `bitcoin_version_major`: Major version number (e.g., 28 for v28.1.0)
+- `bitcoin_version_minor`: Minor version number (e.g., 1 for v28.1.0)
+- `bitcoin_version_patch`: Patch version number (e.g., 0 for v28.1.0)
+- `bitcoin_version_text`: Full version text including build details (with text as a label)
+- `bitcoin_version_number`: Version as a decimal number (e.g., 28.1 for v28.1.0)
+- `bitcoin_full_version_string`: Metric with description containing the full version string
+
 ### Mempool Metrics
 - `bitcoin_mempool_size`: Number of transactions in mempool
 - `bitcoin_mempool_bytes`: Size of mempool in bytes
@@ -214,7 +223,7 @@ Currently, the collector uses these Bitcoin Core RPC endpoints:
 
 ### Network
 - `getnetworkinfo`: Network state
-  - Used for: connection count
+  - Used for: connection count, version information
 - `getnettotals`: Network traffic
   - Used for: bytes sent/received
 - `getpeerinfo`: Peer details
@@ -228,6 +237,10 @@ Currently, the collector uses these Bitcoin Core RPC endpoints:
 - `getmemoryinfo`: Memory usage statistics
 - `gettxoutsetinfo`: UTXO set information
   - Used with "muhash" mode for faster UTXO stats
+
+### Version Information
+- `getnetworkinfo`: Bitcoin Core version details
+  - Used for: version number, user agent string
 
 ## Available but Unused RPC Commands
 
@@ -262,14 +275,31 @@ These RPC commands could be useful for additional metrics:
 - `getwalletinfo`: Wallet statistics
 - `listunspent`: Detailed UTXO information
 
+## Grafana Dashboard
+
+The collector exposes metrics that can be visualized in Grafana. A sample dashboard is provided in `../home-server/services/grafana/bitcoin-node-dashboard.json`.
+
+### Version Metrics in Grafana
+
+To display Bitcoin Core version in Grafana:
+
+1. Use `bitcoin_version_number` for a simple numeric version display (e.g., 28.1)
+2. To display as "v28.1", use value mapping or transformations:
+   
+   **Method 1: Value Mapping**
+   - Add a new panel using the `bitcoin_version_number` metric
+   - Add value mapping with regex `/.*/` and display text `v${__value}`
+   
+   **Method 2: Transformation**
+   - Add a transformation to add a field using binary operation
+   - Select "Concat" operation with parameter "v"
+
+3. For full version information, use `bitcoin_version_text` or `bitcoin_version_info` with label support enabled
+
 ## Adding New Metrics
 
 To add new metrics from these endpoints:
 
 1. Define a new Prometheus metric in the collector
-2. Add the RPC call in the `collect_metrics()` function
+2. Add the RPC call in the `collect_regular_metrics()` function
 3. Update tests and documentation
-
-## Configuration
-
-[Configuration details here...]

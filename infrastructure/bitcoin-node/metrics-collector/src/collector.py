@@ -26,6 +26,7 @@ BITCOIN_VERIFICATION_PROGRESS = Gauge('bitcoin_verification_progress', 'Blockcha
 BITCOIN_DIFFICULTY = Gauge('bitcoin_difficulty', 'Current mining difficulty')
 BITCOIN_MEMPOOL_SIZE = Gauge('bitcoin_mempool_size', 'Number of transactions in mempool')
 BITCOIN_MEMPOOL_BYTES = Gauge('bitcoin_mempool_bytes', 'Size of mempool in bytes')
+BITCOIN_MEMPOOL_USAGE = Gauge('bitcoin_mempool_usage', 'Memory usage of mempool in bytes')
 BITCOIN_PEER_COUNT = Gauge('bitcoin_peer_count', 'Number of connected peers')
 BITCOIN_MEMORY_USAGE = Gauge('bitcoin_memory_usage_bytes', 'Memory usage in bytes')
 BITCOIN_PRICE_USD = Gauge('bitcoin_price_usd', 'Current Bitcoin price in USD')
@@ -34,6 +35,12 @@ BITCOIN_FEE_HIGH = Gauge('bitcoin_fee_high', 'Estimated fee rate for high priori
 BITCOIN_FEE_MEDIUM = Gauge('bitcoin_fee_medium', 'Estimated fee rate for medium priority - 3 blocks (sat/vB)')
 BITCOIN_FEE_LOW = Gauge('bitcoin_fee_low', 'Estimated fee rate for low priority - 6 blocks (sat/vB)')
 BITCOIN_SIZE_ON_DISK = Gauge('bitcoin_size_on_disk_bytes', 'Total blockchain size on disk in bytes')
+BITCOIN_VERSION = Gauge('bitcoin_version_info', 'Bitcoin Core version info', ['version'])
+# Additional version metrics for easier display in Grafana
+BITCOIN_VERSION_MAJOR = Gauge('bitcoin_version_major', 'Bitcoin Core major version')
+BITCOIN_VERSION_MINOR = Gauge('bitcoin_version_minor', 'Bitcoin Core minor version')
+BITCOIN_VERSION_PATCH = Gauge('bitcoin_version_patch', 'Bitcoin Core patch version')
+BITCOIN_VERSION_TEXT = Gauge('bitcoin_version_text', 'Bitcoin Core version as text', ['text'])
 
 # Network metrics
 BITCOIN_NET_BYTES_SENT = Gauge('bitcoin_network_bytes_sent_total', 'Total bytes sent')
@@ -231,6 +238,7 @@ async def collect_regular_metrics():
             mempool_info = rpc.getmempoolinfo()
             BITCOIN_MEMPOOL_SIZE.set(mempool_info['size'])
             BITCOIN_MEMPOOL_BYTES.set(mempool_info['bytes'])
+            BITCOIN_MEMPOOL_USAGE.set(mempool_info['usage'])
             
             # Get fee estimates for different priorities
             high_priority = rpc.estimatesmartfee(1)
@@ -303,6 +311,59 @@ async def collect_regular_metrics():
                     print("[Metrics] Successfully collected memory metrics", flush=True)
         except Exception as e:
             print(f"[Metrics] Error collecting memory metrics: {str(e)}", flush=True)
+            
+        # Get node info including version
+        try:
+            # Get network info including version details
+            network_info = rpc.getnetworkinfo()
+            version_string = network_info['subversion'].replace('/', '').replace(':', '')
+            
+            # Parse numeric version
+            version = network_info['version']
+            major_version = version // 10000
+            minor_version = (version // 100) % 100
+            patch_version = version % 100
+            
+            # Set numeric version components
+            BITCOIN_VERSION_MAJOR.set(major_version)
+            BITCOIN_VERSION_MINOR.set(minor_version)
+            BITCOIN_VERSION_PATCH.set(patch_version)
+            
+            # Clear any previous version metrics
+            for label in BITCOIN_VERSION._metrics:
+                BITCOIN_VERSION.remove(label)
+            
+            # Set the current version
+            BITCOIN_VERSION.labels(version=version_string).set(1)
+            
+            # Clear any previous text version metrics
+            for label in BITCOIN_VERSION_TEXT._metrics:
+                BITCOIN_VERSION_TEXT.remove(label)
+                
+            # Set text version for easy display
+            BITCOIN_VERSION_TEXT.labels(text=f"v{major_version}.{minor_version}.{patch_version} ({version_string})").set(1)
+            
+            # Create a set of specialized metrics just for the version string components
+            # These will have the version number as the value itself, not as a label
+            version_num = float(f"{major_version}.{minor_version}{patch_version/100:.2f}".replace('.0', ''))
+            
+            # Create or update version gauges that store version information as values
+            version_gauge_name = 'BITCOIN_VERSION_NUMBER'
+            if not hasattr(sys.modules[__name__], version_gauge_name):
+                setattr(sys.modules[__name__], version_gauge_name, 
+                      Gauge('bitcoin_version_number', 'Bitcoin Core version as a decimal number'))
+            getattr(sys.modules[__name__], version_gauge_name).set(version_num)
+            
+            # Create a gauge for the full version string
+            full_version_name = 'BITCOIN_FULL_VERSION_STRING'
+            if not hasattr(sys.modules[__name__], full_version_name):
+                setattr(sys.modules[__name__], full_version_name, 
+                      Gauge('bitcoin_full_version_string', f'Running Bitcoin Core {version_string}'))
+            getattr(sys.modules[__name__], full_version_name).set(1)
+            
+            print(f"[Metrics] Bitcoin Core version: {version_string} (v{major_version}.{minor_version}.{patch_version}) = {version_num}", flush=True)
+        except Exception as e:
+            print(f"[Metrics] Error collecting version info: {str(e)}", flush=True)
             
     except Exception as e:
         print(f"[Metrics] Error in collect_metrics: {str(e)}", flush=True)
