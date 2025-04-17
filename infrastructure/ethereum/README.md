@@ -75,7 +75,7 @@ This repository contains the configuration and setup for running an Ethereum val
 ## Documentation & Resources
 
 ### Detailed Configuration
-- [Detailed Setup Documentation](./ethereum-eigen.md) - Complete configuration details and current setup status
+- [Detailed Setup Documentation](../home-server/services/ethereum-eigen.md) - Complete configuration details and current setup status
 
 ### Official Documentation
 - [Ethereum Documentation](https://ethereum.org/en/developers/docs/)

@@ -18,12 +18,12 @@ This server serves as the primary infrastructure for running the Monitoring stac
 
 ### Currently Running
 - Monitoring Stack
-  - [Grafana](./services/graphana.md)
+  - [Grafana](./services/grafana/README.md)
   - [Prometheus](./services/prometheus.md)
   - [Docker Infrastructure](./services/docker.md)
 - Bitcoin Infrastructure
-  - [Bitcoin Node](./services/bitcoin-node.md)
-  - [Bitcoin Node Collector](./services/bitcoin-collector.md)
+  - [Bitcoin Node](../bitcoin-node/README.md)
+  - [Bitcoin Node Collector](../bitcoin-node/metrics-collector/README.md)
 - Ethereum Infrastructure
   - [Ethereum-Eigen Validator](./services/ethereum-eigen.md)
 

@@ -361,7 +361,7 @@ JITO validators require additional parameters to participate in MEV extraction. 
    - `--relayer-url`: Endpoint for JITO's transaction relayer
    - `--shred-receiver-address`: Address where validator shreds are sent
 
-> **Note**: For mainnet, you will need to use different addresses for the parameters above. Consult the [JITO Documentation](https://jito-labs.gitbook.io/mev/validators/getting-started) for mainnet values.
+> **Note**: For mainnet, you will need to use different addresses for the parameters above. Consult the [JITO Documentation](https://app.gitbook.com/o/mnndgJgxjkxrPTXML9hf/sites/site_zNnMj/validators/getting-started) for mainnet values.
 
 ## Starting the Validator
 

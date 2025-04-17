@@ -19,7 +19,7 @@
 ### Blockchain-Specific Exporters
 | Tool | Purpose | Link |
 |------|---------|------|
-| Solana Exporter | Solana metrics collector | [Solana Exporter Documentation](https://github.com/mrgnlabs/solana-exporter) |
+| Solana Exporter | Solana metrics collector | [Solana Exporter Documentation](https://github.com/asymmetric-research/solana-exporter) |
 | Bitcoin Exporter | Bitcoin metrics collector | [jvstein/bitcoin-prometheus-exporter](https://github.com/jvstein/bitcoin-prometheus-exporter) |
 | Ethereum Exporter | Ethereum metrics collector | [31z4/ethereum-prometheus-exporter](https://github.com/31z4/ethereum-prometheus-exporter) |
 
@@ -28,7 +28,6 @@
 ### Solana Resources
 | Resource | Description | Link |
 |----------|-------------|------|
-| Hardware Requirements | Solana validator requirements | [solana.com/running-validator/validator-reqs](https://solana.com/running-validator/validator-reqs) |
 | Agave Requirements | Agave validator requirements | [docs.anza.xyz](https://docs.anza.xyz/operations/requirements) |
 | Hardware Compatibility | Solana Hardware Compatibility List | [solanahcl.org](https://solanahcl.org/) |
 | RPC API Documentation | Solana RPC HTTP API reference | [solana.com/docs/rpc/http](https://solana.com/docs/rpc/http) |
@@ -44,7 +43,7 @@
 ### Example Dashboards
 | Dashboard | Description | Link |
 |-----------|-------------|------|
-| Nordstar Dashboard | Reference Grafana dashboard setup | [Grafana Dashboard](https://grafana.com/grafana/dashboards/b97d2afafc7444c9bcd90f094114e432) |
+| Nordstar Dashboard | Reference Grafana dashboard setup | [Nordstar Dashboard](https://nordstar.one/) |
 
 ## System Administration
 
@@ -64,7 +63,6 @@
 |---------|-------------|------|
 | OVH | Domain registration and management | [ovh.com](https://www.ovh.com/) |
 | Fiberstate | Bare metal server hosting | [fiberstate.com](https://www.fiberstate.com/) |
-| LowEndTalk | Server hosting discussion | [lowendtalk.com/forumdisplay.php?f=36](https://www.lowendtalk.com/forumdisplay.php?f=36) |
 
 ## Security
 
@@ -81,7 +79,6 @@
 |----------|-------------|------|
 | Linux Server Security | Comprehensive guide | [Security Guide](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server) |
 | SSH Hardening | OpenSSH security guide | [Mozilla SSH Guidelines](https://infosec.mozilla.org/guidelines/openssh) |
-| Key Management | Solana key management guide | [solana.com/running-validator/validator-keys](https://solana.com/running-validator/validator-keys) |
 
 ## Community Resources
 

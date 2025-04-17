@@ -27,7 +27,7 @@ This guide provides step-by-step instructions for setting up an Agave validator 
 
 This tutorial is based on the following resources:
 - [Building from source](https://docs.solana.com/running-validator/validator-software#building-from-source)
-- [Agave Beginners Guide](https://docs.agaveos.io/en/latest/getting-started/index.html)
+- [Agave Beginners Guide](https://github.com/agjell/sol-tutorials/blob/master/agave-beginners-guide.md)
 
 ## Prerequisites
 
@@ -134,7 +134,7 @@ solana-keygen new --outfile ~/wallets/withdrawer.json
 solana-keygen recover --outfile ~/wallets/test-recovery.json
 ```
 
-> **Note:** The key generation method above is suitable for testing and development. For production environments, follow the secure key management procedures outlined in the [Cold Key Management Guide](cold-key-management.md) to ensure maximum security for your validator keys.
+> **Note:** The key generation method above is suitable for testing and development. For production environments, follow the secure key management procedures outlined in the [Cold Key Management Guide](../cold-key-management.md) to ensure maximum security for your validator keys.
 
 ### Validator Key Security Strategy
 

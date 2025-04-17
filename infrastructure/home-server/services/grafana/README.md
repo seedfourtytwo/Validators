@@ -87,7 +87,7 @@ enabled = false
    - Scrape interval: 15s
 
 ## Dashboards and Alerts
-Dashboard configurations and alert rules are stored in JSON format. See [grafana-dashboards.md](./grafana-dashboards.md) for detailed configurations.
+Dashboard configurations and alert rules are stored in JSON format. See the dashboard JSON files in the `grafana-config/dashboards/` directory for detailed configurations.
 
 
 ### Alert Rules

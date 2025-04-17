@@ -414,7 +414,7 @@ For detailed information about the metrics collector, including:
 - Troubleshooting
 - Custom metric development
 
-See the [Bitcoin Metrics Collector Documentation](infrastructure/home-server/services/bitcoin-metrics-collector.md) or visit the [GitHub repository](https://github.com/seedfourtytwo/Validators/tree/main/bitcoin-node/metrics-collector)
+See the [Bitcoin Metrics Collector Documentation](../bitcoin-node/metrics-collector/README.md) or visit the [GitHub repository](https://github.com/seedfourtytwo/Validators/tree/main/bitcoin-node/metrics-collector)
 
 ## Maintenance & Troubleshooting
 
@@ -466,7 +466,7 @@ See the [Bitcoin Metrics Collector Documentation](infrastructure/home-server/ser
 
 - [Bitcoin Core Documentation](https://bitcoin.org/en/bitcoin-core/)
 - [Bitcoin Core GitHub](https://github.com/bitcoin/bitcoin)
-- [Bitcoin Metrics Collector Documentation](infrastructure/home-server/services/bitcoin-metrics-collector.md)
+- [Bitcoin Metrics Collector Documentation](../bitcoin-node/metrics-collector/README.md)
 - [Systemd Service Documentation](https://www.freedesktop.org/software/systemd/man/systemd.service.html)
 
 
