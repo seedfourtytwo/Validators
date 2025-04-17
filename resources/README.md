@@ -12,14 +12,14 @@
 ### Core Components
 | Tool | Description | Documentation | Source |
 |------|-------------|---------------|--------|
-| Prometheus | Time series database and monitoring system | [Prometheus Documentation](https://prometheus.io/docs/introduction/overview/){:target="_blank"} | [prometheus/GitHub](https://github.com/prometheus/prometheus){target="blank"} |
-| Grafana | Data visualization and alerting | [Grafana Documentation](https://grafana.com/docs/){:target="_blank"} | [grafana/GitHub](https://github.com/grafana/grafana){target="blank"} |
-| Node Exporter | System metrics collector | [Node Exporter Documentation](https://prometheus.io/docs/guides/node-exporter/){target="blank"} | [prometheus/node_exporter](https://github.com/prometheus/node_exporter){target="blank"} |
+| Prometheus | Time series database and monitoring system | <a href="https://prometheus.io/docs/introduction/overview/" target="_blank">Prometheus Documentation</a> | [prometheus/GitHub](https://github.com/prometheus/prometheus){target="blank"} |
+| Grafana | Data visualization and alerting | <a href="https://grafana.com/docs/" target="_blank">Grafana Documentation</a> | [grafana/GitHub](https://github.com/grafana/grafana){target="blank"} |
+| Node Exporter | System metrics collector | <a href="https://prometheus.io/docs/guides/node-exporter/" target="_blank">Node Exporter Documentation</a> | [prometheus/node_exporter](https://github.com/prometheus/node_exporter){target="blank"} |
 
 ### Blockchain-Specific Exporters
 | Tool | Purpose | Link |
 |------|---------|------|
-| Solana Exporter | Solana metrics collector | [Solana Exporter Documentation](https://github.com/mrgnlabs/solana-exporter){:target="_blank"} |
+| Solana Exporter | Solana metrics collector | <a href="https://github.com/mrgnlabs/solana-exporter" target="_blank">Solana Exporter Documentation</a> |
 | Bitcoin Exporter | Bitcoin metrics collector | [jvstein/bitcoin-prometheus-exporter](https://github.com/jvstein/bitcoin-prometheus-exporter) |
 | Ethereum Exporter | Ethereum metrics collector | [31z4/ethereum-prometheus-exporter](https://github.com/31z4/ethereum-prometheus-exporter) |
 
@@ -102,7 +102,7 @@
 | Mempool Space | Bitcoin mempool visualization | [mempool.space](https://mempool.space/) |
 
 ## 📊 Metrics Reference
-- [Solana Validator Metrics](https://docs.solana.com/developing/network/validating/validator-monitoring#metrics){:target="_blank"}
-- [Prometheus Metrics Best Practices](https://prometheus.io/docs/practices/naming/){:target="_blank"}
-- [Grafana Dashboard Best Practices](https://grafana.com/docs/grafana/latest/dashboards/best-practices/){:target="_blank"}
+- <a href="https://docs.solana.com/developing/network/validating/validator-monitoring#metrics" target="_blank">Solana Validator Metrics</a>
+- <a href="https://prometheus.io/docs/practices/naming/" target="_blank">Prometheus Metrics Best Practices</a>
+- <a href="https://grafana.com/docs/grafana/latest/dashboards/best-practices/" target="_blank">Grafana Dashboard Best Practices</a>
 

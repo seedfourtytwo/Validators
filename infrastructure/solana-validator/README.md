@@ -4,9 +4,9 @@ Testnet Solana validator running on dedicated bare metal hardware with secure ke
 
 ## 📊 Status & Identity
 - **Network**: Testnet
-- **Validator Identity**: [JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF](https://www.validators.app/validators/JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF?locale=en&network=testnet){:target="_blank"}
+- **Validator Identity**: <a href="https://www.validators.app/validators/JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF?locale=en&network=testnet" target="_blank">JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF</a>
 - **Vote Account**: `3TEX5gBjcZCzAz3AYT2BQrwpDTSUd5FtszPs7yx9iGGL`
-- **Program**: [Solana Foundation Delegation Program (SFDP)](https://solana.com/foundation/delegation-program){:target="_blank"}
+- **Program**: <a href="https://solana.com/foundation/delegation-program" target="_blank">Solana Foundation Delegation Program (SFDP)</a>
 
 ## 🔑 Key Management
 Validator keys are managed using secure cold storage procedures:
@@ -35,7 +35,7 @@ Validator keys are managed using secure cold storage procedures:
   - [Node Exporter](services/monitoring/node-exporter.md)
   - [Solana Exporter](services/monitoring/solana-exporter.md)
   - [Metrics Reference](services/monitoring/metrics-reference.md)
-  - [Public Dashboard](https://metric.seed42.co/public-dashboards/94ca941675e947cb877619494cf95d80){:target="_blank"}
+  - <a href="https://metric.seed42.co/public-dashboards/94ca941675e947cb877619494cf95d80" target="_blank">Public Dashboard</a>
 
 ## 🌐 Network Configuration
 | Port | Protocol | Use | Access |
@@ -83,7 +83,7 @@ curl -s localhost:9100/metrics | grep solana_validator_active_stake  # Check act
 - [JITO Configuration Guide](services/jito.md)
 
 ## 🙏 Acknowledgments
-> Special thanks to [Nordstar](https://nordstar.one/){:target="_blank"} for his invaluable help and guidance on Discord in setting up this validator. 
+> Special thanks to <a href="https://nordstar.one/" target="_blank">Nordstar</a> for his invaluable help and guidance on Discord in setting up this validator. 
 > Don't hesitate to delegate to them.
 
 ## 🚀 Next Major Milestone
