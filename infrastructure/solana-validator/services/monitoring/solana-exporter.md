@@ -1,18 +1,52 @@
 # Solana Exporter Service
 
+## Table of Contents
+1. [Overview](#overview)
+2. [Service Information](#service-information)
+3. [Purpose](#purpose)
+4. [Directory Structure](#directory-structure)
+   - [File Locations](#file-locations)
+   - [Permissions](#permissions)
+5. [Configuration](#configuration)
+   - [Systemd Service Configuration](#systemd-service-configuration)
+   - [Command Line Options](#command-line-options)
+6. [Metrics](#metrics)
+   - [Validator Metrics](#validator-metrics)
+   - [Network Metrics](#network-metrics)
+   - [Performance Metrics](#performance-metrics)
+   - [Metrics Format](#metrics-format)
+7. [Service Management](#service-management)
+   - [Starting the Service](#starting-the-service)
+   - [Stopping the Service](#stopping-the-service)
+   - [Restarting the Service](#restarting-the-service)
+   - [Checking Service Status](#checking-service-status)
+   - [Enabling Service on Boot](#enabling-service-on-boot)
+8. [Accessing Metrics](#accessing-metrics)
+   - [Remote Access from Home Server](#remote-access-from-home-server)
+9. [Grafana Dashboards](#grafana-dashboards)
+10. [Maintenance](#maintenance)
+    - [Updating Solana Exporter](#updating-solana-exporter)
+    - [Verifying Metrics](#verifying-metrics)
+11. [Troubleshooting](#troubleshooting)
+    - [Common Issues](#common-issues)
+    - [Log Analysis](#log-analysis)
+12. [Security Considerations](#security-considerations)
+
 ## Overview
 Solana Exporter is a Prometheus exporter for Solana blockchain metrics. It collects various Solana-specific metrics and exposes them in Prometheus format, making them available for monitoring and alerting. This document details the configuration and operation of the Solana Exporter on my Solana validator server.
 
 ## Service Information
 - **Service Name**: solana-exporter.service
 - **Service File**: /etc/systemd/system/solana-exporter.service
+- **Binary Location**: /home/sol/validators/monitoring/solana-exporter/solana-exporter
 - **Run As**: sol user
 - **Status**: Active and running
 - **Repository**: https://github.com/asymmetric-research/solana-exporter
 - **Listen Address**: 0.0.0.0:9100
 - **Server IP**: 38.97.62.158
 - **Access Restriction**: Only accessible from home IP address for security
-- **Binary Location**: /home/sol/validators/monitoring/solana-exporter/solana-exporter
+- **RPC Endpoint**: http://127.0.0.1:8899
+- **Validator Identity**: JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF
 
 ## Purpose
 Solana Exporter serves several critical functions for the Solana validator:
@@ -22,11 +56,28 @@ Solana Exporter serves several critical functions for the Solana validator:
 3. **Performance Tracking**: Enables tracking of validator performance over time
 4. **Alerting**: Provides data for alerting on validator issues
 
+## Directory Structure
+
+### File Locations
+The Solana Exporter is installed in the validators monitoring directory alongside other monitoring tools:
+
+```
+/home/sol/validators/monitoring/
+├── solana-exporter/
+│   └── solana-exporter    # Main binary
+└── node-exporter/         # Other monitoring tools
+```
+
+### Permissions
+- Binary owner: sol:sol
+- Binary permissions: rwxr-xr-x (755)
+- Parent directories require read and execute (rx) permission for the sol user
+
 ## Configuration
 
 ### Systemd Service Configuration
 **File**: /etc/systemd/system/solana-exporter.service
-```
+```ini
 [Unit]
 Description=Solana Exporter for Prometheus
 After=network.target
@@ -48,64 +99,66 @@ WantedBy=multi-user.target
 ### Command Line Options
 The Solana Exporter is started with the following options:
 
-| Option | Description |
-|--------|-------------|
-| `-rpc-url http://127.0.0.1:8899` | URL of the Solana RPC endpoint |
-| `-listen-address 0.0.0.0:9100` | Listen address for the metrics endpoint |
-| `-nodekey JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF` | Validator identity public key to monitor |
+| Option | Description | Required |
+|--------|-------------|----------|
+| `-rpc-url` | URL of the Solana RPC endpoint | Yes |
+| `-listen-address` | Listen address for the metrics endpoint | Yes |
+| `-nodekey` | Validator identity public key to monitor | Yes |
 
 ## Metrics
 
-Solana Exporter collects a wide range of Solana-specific metrics. Here are some of the key metric categories:
-
 ### Validator Metrics
-- **Vote Account**: Information about the validator's vote account
-- **Commission**: Validator commission rate
-- **Credits**: Credits earned by the validator
-- **Delinquent Status**: Whether the validator is delinquent
-- **Epoch Progress**: Progress through the current epoch
-- **Identity**: Validator identity information
-- **Last Vote**: Information about the last vote cast
-- **Root Slot**: Current root slot
-- **Slot**: Current slot
-- **Version**: Solana software version
+| Metric Name | Type | Description |
+|-------------|------|-------------|
+| `solana_validator_activated_stake` | gauge | Current activated stake in SOL |
+| `solana_validator_commission` | gauge | Current commission percentage |
+| `solana_validator_last_vote` | gauge | Slot height of the last vote |
+| `solana_validator_root_slot` | gauge | Current root slot |
+| `solana_validator_delinquent` | gauge | Whether validator is delinquent (1=yes, 0=no) |
+| `solana_validator_version` | gauge | Solana software version |
+| `solana_validator_credits` | counter | Total vote credits earned |
+| `solana_validator_skip_rate` | gauge | Vote skip rate as percentage |
 
 ### Network Metrics
-- **Block Height**: Current block height
-- **Epoch**: Current epoch
-- **Slot**: Current slot
-- **Transaction Count**: Number of transactions processed
-- **Vote Account**: Information about vote accounts
+| Metric Name | Type | Description |
+|-------------|------|-------------|
+| `solana_network_slot` | gauge | Current slot height |
+| `solana_network_epoch` | gauge | Current epoch number |
+| `solana_network_epoch_progress` | gauge | Progress through current epoch (%) |
+| `solana_network_validator_count` | gauge | Total number of validators |
+| `solana_network_active_stake` | gauge | Total active stake in SOL |
+| `solana_network_current_stake` | gauge | Current stake in SOL |
+| `solana_network_total_supply` | gauge | Total SOL supply |
 
 ### Performance Metrics
-- **CPU Usage**: CPU usage by the Solana process
-- **Memory Usage**: Memory usage by the Solana process
-- **Disk I/O**: Disk I/O operations by the Solana process
-- **Network I/O**: Network I/O operations by the Solana process
+| Metric Name | Type | Description |
+|-------------|------|-------------|
+| `solana_performance_tower_distance` | gauge | Tower vote distance |
+| `solana_performance_block_time` | gauge | Average block time (ms) |
+| `solana_performance_slot_time` | gauge | Average slot time (ms) |
+| `solana_performance_skip_rate` | gauge | Network skip rate (%) |
+| `solana_performance_transaction_count` | counter | Total transaction count |
+| `solana_performance_block_height` | gauge | Current block height |
 
 ### Metrics Format
 Solana Exporter metrics follow the Prometheus format. Each metric has:
 - A HELP line explaining the metric
-- A TYPE line specifying the metric type (counter, gauge, histogram, etc.)
+- A TYPE line specifying the metric type (counter, gauge, histogram)
 - One or more lines with the actual metric values and labels
 
 Example metrics:
 ```
-# HELP solana_block_height Current block height
-# TYPE solana_block_height gauge
-solana_block_height 123456789
+# HELP solana_validator_activated_stake Current activated stake in SOL
+# TYPE solana_validator_activated_stake gauge
+solana_validator_activated_stake{pubkey="JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF"} 1234567.89
 
-# HELP solana_epoch Current epoch
-# TYPE solana_epoch gauge
-solana_epoch 123
+# HELP solana_validator_skip_rate Vote skip rate as percentage
+# TYPE solana_validator_skip_rate gauge
+solana_validator_skip_rate{pubkey="JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF"} 1.23
 
-# HELP solana_slot Current slot
-# TYPE solana_slot gauge
-solana_slot 123456789
-
-# HELP solana_transaction_count Total number of transactions processed
-# TYPE solana_transaction_count counter
-solana_transaction_count 987654321
+# HELP solana_network_epoch Current epoch number
+# TYPE solana_network_epoch gauge
+solana_network_epoch 123
 ```
 
 ## Service Management
@@ -163,13 +216,27 @@ Since the validator server doesn't have a web browser, metrics should be accesse
          - targets: ['38.97.62.158:9100']
    ```
 
-
 ## Grafana Dashboards
 
-Solana Exporter metrics can be visualized using Grafana dashboards. Recommended dashboards include:
+### Available Dashboards
+1. **Solana Validator Dashboard**
+   - Validator performance metrics
+   - Skip rate comparison
+   - Vote statistics
+   - Stake and commission tracking
 
-1. **Solana Validator Dashboard**: Comprehensive dashboard for Solana validator metrics
-2. **Solana Network Dashboard**: Dashboard for Solana network metrics
+2. **Solana Network Dashboard**
+   - Network-wide metrics
+   - Epoch progress
+   - Transaction statistics
+   - Supply and stake distribution
+
+### Dashboard Features
+- Real-time updates
+- Historical data views
+- Customizable time ranges
+- Alert thresholds
+- Multi-validator comparison
 
 ## Maintenance
 
@@ -223,3 +290,25 @@ To analyze the Solana Exporter logs:
 ```bash
 journalctl -u solana-exporter.service -n 100
 ```
+
+## Security Considerations
+
+1. **Access Control**
+   - Solana Exporter is only accessible from the home server IP address
+   - Firewall rules restrict access to port 9100
+   - RPC endpoint is only accessible locally
+
+2. **Resource Limits**
+   - Service runs with regular user privileges (sol)
+   - No special resource limits needed
+   - Minimal system impact
+
+3. **Data Privacy**
+   - Only public validator data is exposed
+   - No private keys or sensitive information collected
+   - RPC queries are read-only
+
+4. **Network Security**
+   - Local RPC endpoint reduces attack surface
+   - Metrics endpoint is firewalled
+   - Regular security updates applied

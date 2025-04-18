@@ -1,12 +1,44 @@
 # Node Exporter Service
 
+## Table of Contents
+1. [Overview](#overview)
+2. [Service Information](#service-information)
+3. [Purpose](#purpose)
+4. [Directory Structure](#directory-structure)
+   - [File Locations](#file-locations)
+   - [Permissions](#permissions)
+5. [Configuration](#configuration)
+   - [Systemd Service Configuration](#systemd-service-configuration)
+   - [Command Line Options](#command-line-options)
+6. [Metrics](#metrics)
+   - [System Metrics](#system-metrics)
+   - [Hardware Metrics](#hardware-metrics)
+   - [Process Metrics](#process-metrics)
+   - [Metrics Format](#metrics-format)
+7. [Service Management](#service-management)
+   - [Starting the Service](#starting-the-service)
+   - [Stopping the Service](#stopping-the-service)
+   - [Restarting the Service](#restarting-the-service)
+   - [Checking Service Status](#checking-service-status)
+   - [Enabling Service on Boot](#enabling-service-on-boot)
+8. [Accessing Metrics](#accessing-metrics)
+   - [Remote Access from Home Server](#remote-access-from-home-server)
+9. [Maintenance](#maintenance)
+   - [Updating Node Exporter](#updating-node-exporter)
+   - [Verifying Metrics](#verifying-metrics)
+10. [Troubleshooting](#troubleshooting)
+    - [Common Issues](#common-issues)
+    - [Log Analysis](#log-analysis)
+11. [Security Considerations](#security-considerations)
+
 ## Overview
 Node Exporter is a Prometheus exporter for hardware and OS metrics. It collects various system metrics and exposes them in Prometheus format, making them available for monitoring and alerting. This document details the configuration and operation of the Node Exporter on my Solana validator server.
 
 ## Service Information
 - **Service Name**: node_exporter.service
 - **Service File**: /etc/systemd/system/node_exporter.service
-- **Run As**: node_exporter user
+- **Binary Location**: /home/sol/validators/monitoring/node-exporter/node_exporter
+- **Run As**: node_exporter user (member of sol group)
 - **Status**: Active and running
 - **Version**: node_exporter 1.9.1
 - **Repository**: https://github.com/prometheus/node_exporter
@@ -22,11 +54,29 @@ Node Exporter serves several critical functions for the Solana validator:
 3. **Performance Tracking**: Enables tracking of system performance over time
 4. **Alerting**: Provides data for alerting on system issues
 
+## Directory Structure
+
+### File Locations
+The Node Exporter is installed in the validators monitoring directory alongside other monitoring tools:
+
+```
+/home/sol/validators/monitoring/
+├── node-exporter/
+│   └── node_exporter    # Main binary
+└── solana-exporter/     # Other monitoring tools
+```
+
+### Permissions
+- Binary owner: node_exporter:node_exporter
+- Binary permissions: rwxr-xr-x (755)
+- User 'node_exporter' is member of 'sol' group for directory access
+- Parent directories require at least execute (x) permission for the sol group
+
 ## Configuration
 
 ### Systemd Service Configuration
 **File**: /etc/systemd/system/node_exporter.service
-```
+```ini
 [Unit]
 Description=Node Exporter
 Wants=network-online.target
@@ -36,7 +86,11 @@ After=network-online.target
 User=node_exporter
 Group=node_exporter
 Type=simple
-ExecStart=/usr/local/bin/node_exporter --web.listen-address=:9110 --collector.hwmon --path.procfs=/proc --path.sysfs=/sys
+ExecStart=/home/sol/validators/monitoring/node-exporter/node_exporter \
+    --web.listen-address=:9110 \
+    --collector.hwmon \
+    --path.procfs=/proc \
+    --path.sysfs=/sys
 
 [Install]
 WantedBy=multi-user.target
@@ -53,8 +107,6 @@ The Node Exporter is started with the following options:
 | `--path.sysfs=/sys` | Path to the sys filesystem |
 
 ## Metrics
-
-Node Exporter collects a wide range of metrics. Here are some of the key metric categories:
 
 ### System Metrics
 - **CPU Metrics**: Usage, frequency, temperature, and performance
@@ -85,12 +137,6 @@ Example metrics:
 # TYPE node_cpu_seconds_total counter
 node_cpu_seconds_total{cpu="0",mode="idle"} 2334.18
 node_cpu_seconds_total{cpu="0",mode="iowait"} 5.64
-node_cpu_seconds_total{cpu="0",mode="irq"} 0
-node_cpu_seconds_total{cpu="0",mode="nice"} 0
-node_cpu_seconds_total{cpu="0",mode="softirq"} 15162.29
-node_cpu_seconds_total{cpu="0",mode="steal"} 0
-node_cpu_seconds_total{cpu="0",mode="system"} 992.81
-node_cpu_seconds_total{cpu="0",mode="user"} 945315.91
 
 # HELP node_memory_MemTotal_bytes Memory information field MemTotal_bytes.
 # TYPE node_memory_MemTotal_bytes gauge
@@ -152,13 +198,6 @@ Since the validator server doesn't have a web browser, metrics should be accesse
          - targets: ['38.97.62.158:9110']
    ```
 
-## Grafana Dashboards
-
-Node Exporter metrics can be visualized using Grafana dashboards. Recommended dashboards include:
-
-1. **Node Exporter Full**: Comprehensive dashboard for all Node Exporter metrics
-2. **Node Exporter for Solana**: Custom dashboard optimized for Solana validator monitoring
-
 ## Maintenance
 
 ### Updating Node Exporter
@@ -173,7 +212,9 @@ To update Node Exporter to a new version:
    ```bash
    wget https://github.com/prometheus/node_exporter/releases/download/v1.9.1/node_exporter-1.9.1.linux-amd64.tar.gz
    tar xvf node_exporter-1.9.1.linux-amd64.tar.gz
-   sudo cp node_exporter-1.9.1.linux-amd64/node_exporter /usr/local/bin/
+   sudo cp node_exporter-1.9.1.linux-amd64/node_exporter /home/sol/validators/monitoring/node-exporter/
+   sudo chown node_exporter:node_exporter /home/sol/validators/monitoring/node-exporter/node_exporter
+   sudo chmod 755 /home/sol/validators/monitoring/node-exporter/node_exporter
    ```
 
 3. Start the service:
@@ -197,6 +238,13 @@ curl -s 38.97.62.158:9110/metrics | grep -E "node_cpu_seconds_total|node_memory_
    - Check system logs: `journalctl -u node_exporter.service`
    - Verify permissions on the node_exporter binary
    - Check for port conflicts
+   - Verify node_exporter user has access to all parent directories
+   - Ensure node_exporter user is in the sol group
+
+2. **Permission Issues**
+   - Verify binary ownership: `ls -l /home/sol/validators/monitoring/node-exporter/node_exporter`
+   - Check group membership: `groups node_exporter`
+   - Verify parent directory permissions: `ls -la /home/sol/validators/monitoring/`
 
 ### Log Analysis
 To analyze the Node Exporter logs:
@@ -218,3 +266,8 @@ journalctl -u node_exporter.service -n 100
 3. **Data Privacy**
    - Node Exporter collects system metrics only
    - No sensitive data is exposed
+
+4. **File Permissions**
+   - Binary is owned by node_exporter user
+   - Minimal required permissions are set on binary and directories
+   - node_exporter user has limited system access
