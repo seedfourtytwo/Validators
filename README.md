@@ -143,12 +143,12 @@ This project serves as my first learning platform for blockchain infrastructure.
 - **Ethereum**: Coming soon - Validator operations with EigenLayer integration
 - **Bitcoin**: Node operations and monitoring
 
-## Monitoring & Metrics
+### Monitoring & Metrics
 - **Prometheus**: Metrics collection and storage
 - **Grafana**: Visualization and public dashboards
 - **Alerting**: Custom alert configurations for validator health
 
-## Tools & Services
+### Tools & Services
 - **nginx**: Reverse proxy and SSL certificate management
 - **Termius**: Local CLI for remote server access
 - **Git/Github**: Documentation and configuration management
