@@ -41,7 +41,7 @@ Solana Exporter is a Prometheus exporter for Solana blockchain metrics. It colle
 - **Binary Location**: /home/sol/validators/monitoring/solana-exporter/solana-exporter
 - **Run As**: sol user
 - **Status**: Active and running
-- **Repository**: https://github.com/asymmetric-research/solana-exporter
+- **Repository**: https://github.com/seedfourtytwo/solana-exporter (forked from asymmetric-research/solana-exporter)
 - **Listen Address**: 0.0.0.0:9100
 - **Server IP**: 38.97.62.158
 - **Access Restriction**: Only accessible from home IP address for security
@@ -312,3 +312,14 @@ journalctl -u solana-exporter.service -n 100
    - Local RPC endpoint reduces attack surface
    - Metrics endpoint is firewalled
    - Regular security updates applied
+
+## Custom Metrics
+This installation uses our forked version of solana-exporter which includes additional metrics:
+
+### Validator Credits Tracking
+- `solana_validator_current_epoch_credits`: Tracks credits earned in the current epoch
+- `solana_validator_total_credits`: Tracks total accumulated credits since genesis
+
+### Configuration Changes
+- Replaced `-nodekey` with `-validator-identity` for clearer parameter naming
+- Added `-vote-account-pubkey` parameter for precise vote account tracking
