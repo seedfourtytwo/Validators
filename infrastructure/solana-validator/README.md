@@ -45,9 +45,7 @@ Validator keys are managed using secure cold storage procedures:
 - **Previous Implementation**: [Agave](services/agave.md) (Standard Solana client)
 - **Metrics**: 
   - [Node Exporter](services/monitoring/node-exporter.md)
-  - [Node Exporter Metrics Reference](services/monitoring/node-exporter-metrics-reference.md)
   - [Solana Exporter](services/monitoring/solana-exporter.md)
-  - [Metrics Reference](services/monitoring/metrics-reference.md)
   - [Public Dashboard](https://metric.seed42.co/public-dashboards/94ca941675e947cb877619494cf95d80)
 
 ## 🌐 Network Configuration
@@ -94,6 +92,7 @@ curl -s localhost:9100/metrics | grep solana_validator_active_stake  # Check act
 ## 📚 Additional Resources
 - [Setup Tutorials](setup-tutorials/)
 - [JITO Configuration Guide](services/jito.md)
+- [Node Exporter Metrics Reference](services/monitoring/node-exporter-metrics-reference.md)
 
 ## 🙏 Acknowledgments
 > Special thanks to [Nordstar](https://nordstar.one/) 🔗 for his invaluable help and guidance on Discord in setting up this validator. 
