@@ -2,6 +2,18 @@
 
 Testnet Solana validator running on dedicated bare metal hardware with secure key management and optimized performance.
 
+## Table of Contents
+- [Status & Identity](#-status--identity)
+- [Key Management](#-key-management)
+- [Hardware Specifications](#-hardware-specifications)
+- [Core Services](#-core-services)
+- [Network Configuration](#-network-configuration)
+- [System Configuration](#️-system-configuration)
+- [Quick Commands](#️-quick-commands)
+- [Additional Resources](#-additional-resources)
+- [Acknowledgments](#-acknowledgments)
+- [Next Major Milestone](#-next-major-milestone)
+
 ## 📊 Status & Identity
 - **Network**: Testnet
 - **Validator Identity**: [JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF](https://www.validators.app/validators/JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF?locale=en&network=testnet) 🔗
