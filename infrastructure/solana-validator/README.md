@@ -33,6 +33,7 @@ Validator keys are managed using secure cold storage procedures:
 - **Previous Implementation**: [Agave](services/agave.md) (Standard Solana client)
 - **Metrics**: 
   - [Node Exporter](services/monitoring/node-exporter.md)
+  - [Node Exporter Metrics Reference](services/monitoring/node-exporter-metrics-reference.md)
   - [Solana Exporter](services/monitoring/solana-exporter.md)
   - [Metrics Reference](services/monitoring/metrics-reference.md)
   - [Public Dashboard](https://metric.seed42.co/public-dashboards/94ca941675e947cb877619494cf95d80)
