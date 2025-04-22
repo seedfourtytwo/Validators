@@ -1,7 +1,7 @@
 # Solana Validator Light Mode Metrics Reference
 
 ## Overview
-This document provides a comprehensive reference for metrics available through the Solana Exporter running in light mode on the validator. Light mode only collects metrics that are unique to the validator node being queried and cannot be obtained from public RPCs. This document uses the exact metric names as they appear in the exporter output for accurate reference when creating Grafana dashboards.
+This document provides a comprehensive reference for metrics available through the Solana Exporter running in light mode on the validator. Light mode only collects metrics that require local access to the validator node and cannot be obtained from public RPCs. Following recent optimizations, the light mode exporter has been refined to completely eliminate metric duplication with the home server's comprehensive exporter.
 
 ## Table of Contents
 - [Node Metrics](#node-metrics)
@@ -12,16 +12,13 @@ This document provides a comprehensive reference for metrics available through t
 - [Validator Metrics](#validator-metrics)
   - [Credits](#credits)
   - [Leader Slots](#leader-slots)
-- [Cluster Metrics](#cluster-metrics)
-  - [Network Status](#network-status)
-  - [Validator Count](#validator-count)
+- [Usage Notes](#usage-notes)
+  - [Metric Labels](#metric-labels)
+  - [Metrics Separation Strategy](#metrics-separation-strategy)
 - [Grafana Query Examples](#grafana-query-examples)
   - [Critical Monitoring Queries](#critical-monitoring-queries)
   - [Health Status Queries](#health-status-queries)
   - [Performance Queries](#performance-queries)
-- [Usage Notes](#usage-notes)
-  - [Metric Labels](#metric-labels)
-  - [Distinctions from Full Mode](#distinctions-from-full-mode)
 
 ## Node Metrics
 
@@ -84,26 +81,33 @@ These metrics track the validator's participation in voting, which directly affe
 
 This metric tracks leader slot performance, with status values of "valid" or "skipped", which is crucial for validator performance monitoring.
 
-## Cluster Metrics
+## Usage Notes
 
-### Network Status
+### Metric Labels
 
-| Metric | Type | Description | Example Query |
-|--------|------|-------------|---------------|
-| `solana_cluster_active_stake` | gauge | Total active stake (in SOL) of the cluster | `solana_cluster_active_stake` |
-| `solana_cluster_last_vote` | gauge | Most recent voted-on slot of the cluster | `solana_cluster_last_vote` |
-| `solana_cluster_root_slot` | gauge | Max root slot of the cluster | `solana_cluster_root_slot` |
-| `solana_cluster_slots_by_epoch_total` | counter | Number of slots processed by the cluster by status and epoch | `solana_cluster_slots_by_epoch_total{epoch="775",status="valid"}` |
+The Solana exporter in light mode uses several key labels:
+- `identity`: Used with `solana_node_identity` to identify the validator
+- `nodekey`: Used with validator-specific metrics to identify the validator
+- `version`: Used with `solana_node_version` to indicate the Solana software version
+- `status`: Used with slot metrics to indicate "valid" or "skipped"
 
-These metrics provide information about the network's current state and progress from the validator's perspective.
+### Metrics Separation Strategy
 
-### Validator Count
+The optimized light mode now has a clear metric separation strategy:
 
-| Metric | Type | Description | Example Query |
-|--------|------|-------------|---------------|
-| `solana_cluster_validator_count` | gauge | Total number of validators in the cluster by state | `solana_cluster_validator_count{state="current"}` |
+1. **Included in Light Mode**:
+   - `solana_node_*` metrics: Internal validator node status, slots, epochs, etc.
+   - `solana_validator_current_epoch_credits`: Validator-specific credits in current epoch
+   - `solana_validator_total_credits`: Total validator credits since genesis
+   - `solana_validator_leader_slots_total`: Validator leader slot statistics
 
-This metric provides a count of active and delinquent validators in the network.
+2. **Excluded from Light Mode** (collected by home server):
+   - `solana_network_*` metrics: Network-wide information
+   - `solana_cluster_*` metrics: Cluster-wide statistics
+   - `solana_performance_*` metrics: Network performance data
+   - Public validator statistics for other validators
+
+This separation ensures no duplicate metrics between the validator and home server exporters, optimizing both storage and query performance.
 
 ## Grafana Query Examples
 
@@ -144,26 +148,4 @@ rate(solana_validator_total_credits{nodekey="JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR1
 
 # Transaction rate
 rate(solana_node_transactions_total[5m])
-```
-
-## Usage Notes
-
-### Metric Labels
-
-The Solana exporter in light mode uses several key labels:
-- `identity`: Used with `solana_node_identity` to identify the validator
-- `nodekey`: Used with validator-specific metrics to identify the validator
-- `version`: Used with `solana_node_version` to indicate the Solana software version
-- `status`: Used with slot metrics to indicate "valid" or "skipped"
-- `state`: Used with validator count metrics to indicate "current" or "delinquent"
-- `epoch`: Used to identify epoch-specific metrics
-
-### Distinctions from Full Mode
-
-Light mode metrics focus on validator-specific information that requires direct access to the validator node. For comprehensive monitoring, these metrics should be combined with public RPC metrics collected from a home server running the exporter in full mode.
-
-In a distributed monitoring setup:
-1. The validator runs Solana exporter in light mode to minimize resource usage
-2. A home server runs Solana exporter in full mode using public RPCs
-3. Prometheus combines these data sources for complete monitoring
-4. Grafana dashboards display the unified metrics with proper source labels 
+``` 

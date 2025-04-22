@@ -38,7 +38,7 @@
 14. [Related Documentation](#related-documentation)
 
 ## Overview
-Solana Exporter Public is a Prometheus exporter for Solana blockchain metrics that runs on the home server. It collects Solana metrics via public RPC endpoints (either mainnet or testnet) and exposes them in Prometheus format, providing a complete view of the validator's performance in the broader network context.
+The Solana Exporter Public service runs on the home server and collects comprehensive Solana metrics from public RPC endpoints. It provides network-wide metrics and complements the light exporter running on the validator.
 
 ## Service Information
 - **Service Name**: solana-exporter.service

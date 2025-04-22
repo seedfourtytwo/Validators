@@ -71,27 +71,46 @@ scrape_configs:
 ### Monitored Services
 1. **Solana Validator Light**
    - Target: 38.97.62.158:9100
-   - Metrics: Validator-specific metrics that can only be obtained locally
+   - Metrics: Validator-specific metrics that require local node access
    - Scrape Interval: 15s
-   - Purpose: Validator-specific metrics from validator server
+   - Purpose: Collects node-specific metrics and validator credits data that can only be obtained locally
+   - Metric Types: `solana_node_*`, `solana_validator_current_epoch_credits`, `solana_validator_total_credits`
 
 2. **Node Validator** (Solana Validator hardware metrics)
    - Target: 38.97.62.158:9110
    - Metrics: System and hardware metrics
    - Scrape Interval: 15s
    - Purpose: System-level metrics from validator server
+   - Metric Types: `node_*` (CPU, memory, disk, network)
 
 3. **Bitcoin Node**
    - Target: localhost:9332
    - Metrics: Bitcoin Core metrics
    - Scrape Interval: 15s
    - Purpose: Bitcoin node performance metrics
+   - Metric Types: `bitcoin_*`
 
 4. **Solana Public Metrics**
    - Target: localhost:9101
    - Metrics: Comprehensive Solana metrics via public RPC
    - Scrape Interval: 15s
    - Purpose: Network-wide metrics and validator comparison
+   - Metric Types: `solana_network_*`, `solana_cluster_*`, `solana_performance_*`, network-wide validator data
+
+### Metrics Separation Strategy
+To optimize monitoring and avoid duplication, metrics are carefully divided between the validator's light exporter and the home server's comprehensive exporter:
+
+1. **Validator Light Exporter (38.97.62.158:9100)**
+   - Only collects metrics that require local access to the validator
+   - Focused on validator-specific data not accessible through public RPCs
+   - Minimizes resource usage on the validator machine
+
+2. **Home Server Comprehensive Exporter (localhost:9101)**
+   - Collects all network-wide metrics through public RPC
+   - Provides comparative data across all validators
+   - Handles the bulk of metric collection without burdening the validator
+
+This separation ensures efficient monitoring without redundant data collection or storage, while maintaining complete visibility of all important metrics.
 
 ## Data Management
 

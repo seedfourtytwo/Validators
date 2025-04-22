@@ -120,10 +120,17 @@ The Solana Exporter is started with the following options:
 ### Light Mode Operation
 The Solana Exporter supports a "light mode" that reduces the load on the validator by only collecting metrics that are unique to the validator node being queried. In light mode:
 
-- Only validator-specific metrics that cannot be obtained from public RPCs are collected
-- Network-wide metrics (which can be obtained from any RPC node) are not reported
-- The validator experiences reduced CPU and network load
-- The exporter's memory footprint is smaller
+- Only validator-specific metrics that require local node access are collected
+- Network-wide metrics (`solana_network_*`) are completely excluded
+- Cluster metrics (`solana_cluster_*`) are excluded to avoid duplication with the home server exporter
+- Performance metrics that can be obtained from public RPCs are excluded
+- The validator experiences reduced CPU, memory, and network load
+- The exporter's memory footprint is significantly smaller
+
+This optimized light mode implementation ensures no metric duplication between the validator's exporter and the home server's comprehensive exporter. Each exporter has a clearly defined role:
+
+- **Validator Light Exporter**: Collects only metrics that require local access to the validator
+- **Home Server Comprehensive Exporter**: Collects all network-wide metrics and metrics available through public RPCs
 
 Light mode is ideal for the validator server, while a separate instance in full mode can run on a monitoring server using public RPCs to collect the remaining metrics.
 
@@ -187,17 +194,20 @@ solana_network_epoch 123
 
 | Metric Category | Full Mode | Light Mode | Source in Light Mode |
 |-----------------|-----------|------------|----------------------|
+| `solana_node_*` metrics | ✅ | ✅ | Validator RPC |
 | Validator status | ✅ | ✅ | Validator RPC |
 | Validator version | ✅ | ✅ | Validator RPC |
 | Validator health | ✅ | ✅ | Validator RPC |
-| Network metrics | ✅ | ❌ | N/A (use public RPC) |
-| Public validator stats | ✅ | ❌ | N/A (use public RPC) |
-| Performance metrics | ✅ | Partial | Validator RPC |
+| `solana_validator_*` credits | ✅ | ✅ | Validator RPC |
+| `solana_network_*` metrics | ✅ | ❌ | N/A (collected by home server) |
+| `solana_cluster_*` metrics | ✅ | ❌ | N/A (collected by home server) |
+| Public validator stats | ✅ | ❌ | N/A (collected by home server) |
+| Performance metrics | ✅ | ❌ | N/A (collected by home server) |
 
-When running in light mode, the metrics output is significantly reduced. For example:
+When running in light mode, the metrics output is significantly reduced to only include validator-specific metrics:
 ```
 # Before light mode: ~10,742 bytes of metrics data
-# After light mode: ~187 lines of metrics data
+# After optimized light mode: ~150 lines of metrics data
 ```
 
 ## Service Management
@@ -372,9 +382,16 @@ The validator server runs Solana Exporter in light mode to minimize resource usa
    ```
 
 2. **Metrics Available**:
-   - Validator health status
-   - Version information
-   - Internal metrics that can only be obtained from the validator itself
+   - `solana_node_*` metrics (health, slots, epochs, identity)
+   - `solana_validator_current_epoch_credits`
+   - `solana_validator_total_credits`
+   - Validator-specific internal metrics
+
+3. **Metrics Excluded**:
+   - `solana_network_*` metrics
+   - `solana_cluster_*` metrics
+   - Performance metrics that can be obtained from public RPCs
+   - Public validator statistics
 
 ### Home Server Comprehensive Mode Configuration
 The home server runs a separate instance of Solana Exporter in comprehensive mode, collecting all network-wide and public metrics from public RPC endpoints (testnet):
