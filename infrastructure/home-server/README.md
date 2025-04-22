@@ -21,6 +21,7 @@ This server serves as the primary infrastructure for running the Monitoring stac
   - [Grafana](./services/grafana/README.md)
   - [Prometheus](./services/prometheus.md)
   - [Docker Infrastructure](./services/docker.md)
+  - [Solana Exporter Public](./services/monitoring/solana-exporter-public/solana-exporter-public.md)
 - Bitcoin Infrastructure
   - [Bitcoin Node](../bitcoin-node/README.md)
   - [Bitcoin Node Collector](../bitcoin-node/metrics-collector/README.md)
@@ -29,7 +30,13 @@ This server serves as the primary infrastructure for running the Monitoring stac
 
 ## 📁 Directory Structure
 - `/setup-tutorials/` - Installation and setup guides
+  - [Solana Exporter Setup](./setup-tutorials/solana-exporter.md)
+  - [Prometheus Setup](./setup-tutorials/prometheus.md)
+  - [Grafana Setup](./setup-tutorials/graphana.md)
+  - [Docker Setup](./setup-tutorials/docker.md)
 - `/services/` - Service configurations and documentation
+  - `/monitoring/` - Monitoring service configurations
+    - `/solana-exporter-public/` - Solana exporter (public RPC) documentation
 - `/linux-config/` - System-level configurations
 - `/monitoring/` - Monitoring stack configurations
 

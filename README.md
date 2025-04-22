@@ -29,6 +29,10 @@ This project serves as my first learning platform for blockchain infrastructure.
 │   ├── ethereum/           # Ethereum & EigenLayer validator documentation
 │   ├── bitcoin-node/      # Bitcoin node documentation
 │   ├── home-server/       # Home server setup and services
+│   │   ├── services/      # Home server services
+│   │   │   └── monitoring/ # Monitoring service configurations
+│   │   │       └── solana-exporter-public/ # Solana exporter using public RPC
+│   │   └── setup-tutorials/ # Setup guides for home server services
 │   └── home-router/       # Network and routing configuration
 ├── resources/            # Documentation, guides, and references
 ├── infra-overview.png    # Infrastructure overview diagram
@@ -47,6 +51,7 @@ This project serves as my first learning platform for blockchain infrastructure.
   - Custom monitoring with Prometheus & Grafana
   - Automated alerts for validator health
   - Performance optimization for MEV rewards
+  - Distributed monitoring architecture (validator + home server)
 - **Next Steps**: 
   - Optimize MEV performance
   - Enhance monitoring coverage
@@ -72,12 +77,14 @@ This project serves as my first learning platform for blockchain infrastructure.
 - **Validator Server** (Fiberstate Data Center)
   - Primary Solana validator
   - High-performance hardware
+  - Light-mode monitoring tools
 
 - **Home Server**
   - Metrics collection & visualization
   - Bitcoin node
   - Ethereum services (planned)
   - Prometheus & Grafana
+  - Solana public metrics collector (via public RPC)
 
 - **Cold Storage**: Secure key generation and storage solution
 
@@ -111,11 +118,15 @@ This project serves as my first learning platform for blockchain infrastructure.
   - Resource utilization
   - Performance tracking
 
-- **Solana Exporter**
-  - Validator metrics
-  - Network statistics
-  - Performance indicators
-  - MEV metrics
+- **Solana Exporter (Distributed)**
+  - **Validator Side (Light Mode)**
+    - Validator-specific metrics
+    - Reduced resource footprint
+    - Local RPC access
+  - **Home Server Side (Comprehensive Mode)**
+    - Network-wide metrics
+    - Public RPC access
+    - Complete validator context
 
 - **Bitcoin Exporter** (self made)
   - Node health

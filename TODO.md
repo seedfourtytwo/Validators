@@ -12,7 +12,7 @@ Performance and tuning review for Sol valdiator
 Ethereum + Eigen validator
 
 
-
+track the temp for the broadcom chip as well for Sol validator
 
 
 

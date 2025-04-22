@@ -10,11 +10,13 @@
 5. [Configuration](#configuration)
    - [Systemd Service Configuration](#systemd-service-configuration)
    - [Command Line Options](#command-line-options)
+   - [Light Mode Operation](#light-mode-operation)
 6. [Metrics](#metrics)
    - [Validator Metrics](#validator-metrics)
    - [Network Metrics](#network-metrics)
    - [Performance Metrics](#performance-metrics)
    - [Metrics Format](#metrics-format)
+   - [Metrics Availability by Mode](#metrics-availability-by-mode)
 7. [Service Management](#service-management)
    - [Starting the Service](#starting-the-service)
    - [Stopping the Service](#stopping-the-service)
@@ -31,6 +33,10 @@
     - [Common Issues](#common-issues)
     - [Log Analysis](#log-analysis)
 12. [Security Considerations](#security-considerations)
+13. [Distributed Monitoring Setup](#distributed-monitoring-setup)
+    - [Validator Light Mode Configuration](#validator-light-mode-configuration)
+    - [Home Server Comprehensive Mode Configuration](#home-server-comprehensive-mode-configuration)
+    - [Prometheus Integration](#prometheus-integration)
 
 ## Overview
 Solana Exporter is a Prometheus exporter for Solana blockchain metrics. It collects various Solana-specific metrics and exposes them in Prometheus format, making them available for monitoring and alerting. This document details the configuration and operation of the Solana Exporter on my Solana validator server.
@@ -47,6 +53,8 @@ Solana Exporter is a Prometheus exporter for Solana blockchain metrics. It colle
 - **Access Restriction**: Only accessible from home IP address for security
 - **RPC Endpoint**: http://127.0.0.1:8899
 - **Validator Identity**: JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF
+- **Vote Account**: 3TEX5gBjcZCzAz3AYT2BQrwpDTSUd5FtszPs7yx9iGGL
+- **Operation Mode**: Light mode (validator-specific metrics only)
 
 ## Purpose
 Solana Exporter serves several critical functions for the Solana validator:
@@ -88,7 +96,9 @@ WorkingDirectory=/home/sol
 ExecStart=/home/sol/validators/monitoring/solana-exporter/solana-exporter \
   -rpc-url http://127.0.0.1:8899 \
   -listen-address 0.0.0.0:9100 \
-  -nodekey JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF
+  -validator-identity JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF \
+  -vote-account-pubkey 3TEX5gBjcZCzAz3AYT2BQrwpDTSUd5FtszPs7yx9iGGL \
+  -light-mode
 Restart=always
 RestartSec=3
 
@@ -103,7 +113,19 @@ The Solana Exporter is started with the following options:
 |--------|-------------|----------|
 | `-rpc-url` | URL of the Solana RPC endpoint | Yes |
 | `-listen-address` | Listen address for the metrics endpoint | Yes |
-| `-nodekey` | Validator identity public key to monitor | Yes |
+| `-validator-identity` | Validator identity public key to monitor | Yes |
+| `-vote-account-pubkey` | Validator vote account public key | Yes |
+| `-light-mode` | Enable light mode (validator-specific metrics only) | No |
+
+### Light Mode Operation
+The Solana Exporter supports a "light mode" that reduces the load on the validator by only collecting metrics that are unique to the validator node being queried. In light mode:
+
+- Only validator-specific metrics that cannot be obtained from public RPCs are collected
+- Network-wide metrics (which can be obtained from any RPC node) are not reported
+- The validator experiences reduced CPU and network load
+- The exporter's memory footprint is smaller
+
+Light mode is ideal for the validator server, while a separate instance in full mode can run on a monitoring server using public RPCs to collect the remaining metrics.
 
 ## Metrics
 
@@ -159,6 +181,23 @@ solana_validator_skip_rate{pubkey="JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF"
 # HELP solana_network_epoch Current epoch number
 # TYPE solana_network_epoch gauge
 solana_network_epoch 123
+```
+
+### Metrics Availability by Mode
+
+| Metric Category | Full Mode | Light Mode | Source in Light Mode |
+|-----------------|-----------|------------|----------------------|
+| Validator status | ✅ | ✅ | Validator RPC |
+| Validator version | ✅ | ✅ | Validator RPC |
+| Validator health | ✅ | ✅ | Validator RPC |
+| Network metrics | ✅ | ❌ | N/A (use public RPC) |
+| Public validator stats | ✅ | ❌ | N/A (use public RPC) |
+| Performance metrics | ✅ | Partial | Validator RPC |
+
+When running in light mode, the metrics output is significantly reduced. For example:
+```
+# Before light mode: ~10,742 bytes of metrics data
+# After light mode: ~187 lines of metrics data
 ```
 
 ## Service Management
@@ -313,13 +352,80 @@ journalctl -u solana-exporter.service -n 100
    - Metrics endpoint is firewalled
    - Regular security updates applied
 
-## Custom Metrics
-This installation uses our forked version of solana-exporter which includes additional metrics:
+## Distributed Monitoring Setup
 
-### Validator Credits Tracking
-- `solana_validator_current_epoch_credits`: Tracks credits earned in the current epoch
-- `solana_validator_total_credits`: Tracks total accumulated credits since genesis
+The monitoring setup is distributed between the validator and home server to optimize resource usage while still providing complete metrics:
 
-### Configuration Changes
-- Replaced `-nodekey` with `-validator-identity` for clearer parameter naming
-- Added `-vote-account-pubkey` parameter for precise vote account tracking
+### Validator Light Mode Configuration
+The validator server runs Solana Exporter in light mode to minimize resource usage while still collecting essential validator-specific metrics that can only be obtained from the validator itself:
+
+1. **Light Mode Service Configuration**:
+   ```ini
+   # /etc/systemd/system/solana-exporter.service
+   [Service]
+   ExecStart=/home/sol/validators/monitoring/solana-exporter/solana-exporter \
+     -rpc-url http://127.0.0.1:8899 \
+     -listen-address 0.0.0.0:9100 \
+     -validator-identity JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF \
+     -vote-account-pubkey 3TEX5gBjcZCzAz3AYT2BQrwpDTSUd5FtszPs7yx9iGGL \
+     -light-mode
+   ```
+
+2. **Metrics Available**:
+   - Validator health status
+   - Version information
+   - Internal metrics that can only be obtained from the validator itself
+
+### Home Server Comprehensive Mode Configuration
+The home server runs a separate instance of Solana Exporter in comprehensive mode, collecting all network-wide and public metrics from public RPC endpoints (testnet):
+
+1. **Full Mode Service Configuration**:
+   ```ini
+   # On home server: /etc/systemd/system/solana-exporter.service
+   [Service]
+   ExecStart=/home/chris/solana-monitoring/solana-exporter/solana-exporter \
+     -rpc-url https://api.testnet.solana.com \
+     -listen-address 0.0.0.0:9101 \
+     -validator-identity JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF \
+     -vote-account-pubkey 3TEX5gBjcZCzAz3AYT2BQrwpDTSUd5FtszPs7yx9iGGL \
+     -comprehensive-vote-account-tracking
+   ```
+
+2. **Metrics Available**:
+   - Network-wide metrics (slots, epochs, total stake)
+   - Public validator statistics
+   - Performance metrics
+   - Comparison with other validators
+
+3. **Home Server Documentation**:
+   - Full documentation: [Solana Exporter Public](../../../home-server/services/monitoring/solana-exporter-public/solana-exporter-public.md)
+   - Setup guide: [Solana Exporter Setup Guide](../../../home-server/setup-tutorials/solana-exporter.md)
+
+### Prometheus Integration
+Prometheus is configured to scrape both instances, using job names to distinguish the sources:
+
+```yaml
+# In prometheus.yml on the home server
+scrape_configs:
+  # Runs on the solana validator and collects metrics that cannot be obtained from public RPCs
+  - job_name: 'solana-validator-light'
+    static_configs:
+      - targets: ['38.97.62.158:9100']
+  # Runs on the solana validator and collects all the hardware and system metrics
+  - job_name: 'node-validator'
+    static_configs:
+      - targets: ['38.97.62.158:9110']
+    scrape_interval: 15s
+  # Runs on the Home server and collects Bitcoin specific metrics
+  - job_name: 'bitcoin-node'
+    static_configs:
+      - targets: ['localhost:9332']
+    scrape_interval: 15s
+  # Runs on the Home server and collects Solana metrics available from public RPCs
+  - job_name: 'solana-public-metrics'
+    static_configs:
+      - targets: ['localhost:9101']
+    scrape_interval: 15s
+```
+
+This setup allows for complete monitoring of the validator with minimal impact on the validator's performance. The validator-side exporter (light mode) focuses on metrics that can only be obtained locally, while the home server exporter (comprehensive mode) collects all public metrics using testnet RPC endpoints.
