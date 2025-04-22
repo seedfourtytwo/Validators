@@ -9,7 +9,7 @@ This document describes the Prometheus monitoring setup used to collect and stor
 | Prometheus | Running | Container: solana-monitoring-prometheus-1 |
 | Data Retention | Active | Stored in Docker volume |
 | Integration | Active | Connected to Grafana |
-| Targets | Active | Monitoring 3 services |
+| Targets | Active | Monitoring 4 services |
 
 ## Container Information
 - **Container Name**: solana-monitoring-prometheus-1
@@ -47,37 +47,51 @@ global:
   scrape_interval: 15s
 
 scrape_configs:
-  - job_name: 'solana-validator'
+  # Runs on the solana validator and collects metrics that cannot be obtained from public RPCs
+  - job_name: 'solana-validator-light'
     static_configs:
       - targets: ['38.97.62.158:9100']
-  - job_name: 'node_validator'
+  # Runs on the solana validator and collects all the hardware and system metrics
+  - job_name: 'node-validator'
     static_configs:
       - targets: ['38.97.62.158:9110']
     scrape_interval: 15s
+  # Runs on the Home server and collects Bitcoin specific metrics
   - job_name: 'bitcoin-node'
     static_configs:
       - targets: ['localhost:9332']
     scrape_interval: 15s
+  # Runs on the Home server and collects Solana metrics available from public RPCs
+  - job_name: 'solana-public-metrics'
+    static_configs:
+      - targets: ['localhost:9101']
+    scrape_interval: 15s
 ```
 
 ### Monitored Services
-1. **Solana Validator**
+1. **Solana Validator Light**
    - Target: 38.97.62.158:9100
-   - Metrics: Node exporter metrics
+   - Metrics: Validator-specific metrics that can only be obtained locally
    - Scrape Interval: 15s
-   - Purpose: System metrics from validator server
+   - Purpose: Validator-specific metrics from validator server
 
 2. **Node Validator** (Solana Validator hardware metrics)
    - Target: 38.97.62.158:9110
-   - Metrics: Custom validator metrics
+   - Metrics: System and hardware metrics
    - Scrape Interval: 15s
-   - Purpose: Solana-specific validator metrics
+   - Purpose: System-level metrics from validator server
 
 3. **Bitcoin Node**
    - Target: localhost:9332
    - Metrics: Bitcoin Core metrics
    - Scrape Interval: 15s
    - Purpose: Bitcoin node performance metrics
+
+4. **Solana Public Metrics**
+   - Target: localhost:9101
+   - Metrics: Comprehensive Solana metrics via public RPC
+   - Scrape Interval: 15s
+   - Purpose: Network-wide metrics and validator comparison
 
 ## Data Management
 
@@ -149,6 +163,9 @@ scrape_configs:
 
    # Check Bitcoin node connectivity
    nc -zv localhost 9332
+   
+   # Check Solana exporter public connectivity
+   nc -zv localhost 9101
    ```
    These commands verify:
    - Port accessibility
@@ -205,3 +222,8 @@ curl http://localhost:9090/-/healthy
    - Monitor volume usage
    - Check for disk space
    - Review retention policies
+
+## Related Documentation
+- [Solana Exporter Public](../solana-exporter-public/solana-exporter-public.md) - Documentation for the Solana exporter using public RPC
+- [Solana Exporter Setup Guide](../../../setup-tutorials/solana-exporter.md) - Setup instructions for the Solana exporter
+- [Prometheus Setup Guide](../../../setup-tutorials/prometheus.md) - Setup instructions for Prometheus
