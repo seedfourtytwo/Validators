@@ -26,7 +26,7 @@ This server serves as the primary infrastructure for running the Monitoring stac
   - [Bitcoin Node](../bitcoin-node/README.md)
   - [Bitcoin Node Collector](../bitcoin-node/metrics-collector/README.md)
 - Ethereum Infrastructure
-  - [Ethereum-Eigen Validator](./services/ethereum-eigen.md)
+  - [Ethereum-Eigen Validator](./services/ethereum-eigen/ethereum-eigen.md)
 
 ## 📁 Directory Structure
 - `/setup-tutorials/` - Installation and setup guides
