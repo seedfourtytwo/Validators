@@ -9,7 +9,17 @@ Add metrics dashboard to a menu on seed42 website + create a dedicated space for
 
 Performance and tuning review for Sol valdiator
 
-Ethereum + Eigen validator
+Continue Panel descriptions.
+Build for Web or into web.
+Re-read all documentation and check it, url check (just for broken)
+
+Tighten security
+Make actual update / maintenance plans
+Set up actual alerts and understand critical level and growth rates.
+
+
+Add Documentation links to panels
+
 
 ### To add for the solana exporter
 
