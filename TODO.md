@@ -11,6 +11,9 @@ Performance and tuning review for Sol valdiator
 
 Ethereum + Eigen validator
 
+### To add for the solana exporter
+
+
 
 track the temp for the broadcom chip as well for Sol validator
 

@@ -22,6 +22,7 @@ This server serves as the primary infrastructure for running the Monitoring stac
   - [Prometheus](./services/prometheus.md)
   - [Docker Infrastructure](./services/docker.md)
   - [Solana Exporter Public](./services/monitoring/solana-exporter-public/solana-exporter-public.md)
+  - [Delegator Tracker](./services/monitoring/delegator-tracker/README.md) - Near real-time tracking of validator delegations
 - Bitcoin Infrastructure
   - [Bitcoin Node](../bitcoin-node/README.md)
   - [Bitcoin Node Collector](../bitcoin-node/metrics-collector/README.md)
@@ -37,7 +38,17 @@ This server serves as the primary infrastructure for running the Monitoring stac
 - `/services/` - Service configurations and documentation
   - `/monitoring/` - Monitoring service configurations
     - `/solana-exporter-public/` - Solana exporter (public RPC) documentation
+    - `/delegator-tracker/` - Validator delegation monitoring service (1h updates)
 - `/linux-config/` - System-level configurations
 - `/monitoring/` - Monitoring stack configurations
+
+## 🔄 Service Dependencies
+The following services require specific dependencies:
+
+### Delegator Tracker
+- Python 3.x with `requests` library
+- Grafana with Infinity plugin
+- Systemd for service management
+- Port 8080 for HTTP server
 
 
