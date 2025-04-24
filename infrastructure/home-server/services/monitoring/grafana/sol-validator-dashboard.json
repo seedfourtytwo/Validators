@@ -31,7 +31,7 @@
       },
       "id": 6,
       "panels": [],
-      "title": "Validator - chain info",
+      "title": "Validator metrics",
       "type": "row"
     },
     {
@@ -39,18 +39,24 @@
         "type": "prometheus",
         "uid": "eeidlz2biblkwd"
       },
+      "description": "Current Epoch",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "blue",
-            "mode": "fixed"
+            "fixedColor": "#00ffa3",
+            "mode": "shades"
           },
           "mappings": [],
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
                 "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
               }
             ]
           }
@@ -63,7 +69,7 @@
         "x": 0,
         "y": 1
       },
-      "id": 1,
+      "id": 28,
       "options": {
         "colorMode": "value",
         "graphMode": "none",
@@ -78,22 +84,14 @@
           "values": false
         },
         "showPercentChange": false,
-        "text": {
-          "titleSize": 100,
-          "valueSize": 50
-        },
         "textMode": "auto",
         "wideLayout": true
       },
       "pluginVersion": "11.6.0",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "eeidlz2biblkwd"
-          },
           "editorMode": "code",
-          "expr": "solana_node_epoch_number",
+          "expr": "solana_node_epoch_number{job=\"solana-public-metrics\"}",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -107,13 +105,13 @@
         "type": "prometheus",
         "uid": "eeidlz2biblkwd"
       },
+      "description": "Epoch progression (%) - Calculated ratio of elapsed slots to total slots in current epoch.\n\n1 Epoch is approx. 2 days or 432,000 slots.",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "blue",
-            "mode": "fixed"
+            "fixedColor": "#03e1ff",
+            "mode": "shades"
           },
-          "decimals": 3,
           "mappings": [],
           "max": 100,
           "min": 0,
@@ -137,7 +135,7 @@
       },
       "id": 2,
       "options": {
-        "displayMode": "basic",
+        "displayMode": "lcd",
         "legend": {
           "calcs": [],
           "displayMode": "list",
@@ -157,15 +155,21 @@
           "values": false
         },
         "showUnfilled": true,
-        "sizing": "manual",
+        "sizing": "auto",
         "valueMode": "color"
       },
       "pluginVersion": "11.6.0",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
           "editorMode": "code",
-          "expr": "(solana_node_slot_height - solana_node_epoch_first_slot) / (solana_node_epoch_last_slot - solana_node_epoch_first_slot) * 100",
-          "legendFormat": "__auto",
+          "expr": "(solana_node_slot_height{job=\"solana-public-metrics\"} - solana_node_epoch_first_slot{job=\"solana-public-metrics\"}) * 100 / \r\n(solana_node_epoch_last_slot{job=\"solana-public-metrics\"} - solana_node_epoch_first_slot{job=\"solana-public-metrics\"})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Epoch progression",
           "range": true,
           "refId": "A"
         }
@@ -178,10 +182,367 @@
         "type": "prometheus",
         "uid": "eeidlz2biblkwd"
       },
+      "description": "Estimated hours remaining in current epoch (based on 400ms target slot time)",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "blue",
+            "fixedColor": "#dd1fff3d",
+            "mode": "shades"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "Hours"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 6,
+        "y": 1
+      },
+      "id": 29,
+      "interval": "1s",
+      "maxDataPoints": 5000,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "(solana_node_epoch_last_slot{job=\"solana-public-metrics\"} - solana_node_slot_height{job=\"solana-public-metrics\"}) / 9000",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Epoch time left",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "dej6guola0w00c"
+      },
+      "description": "From CoinGeko via API:\nhttps://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#03e2ffa3",
+            "mode": "fixed"
+          },
+          "decimals": 2,
+          "mappings": [],
+          "noValue": "Maybe CoinGeko is down!",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          },
+          "unit": "currencyUSD"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 9,
+        "y": 1
+      },
+      "hideTimeOverride": true,
+      "id": 11,
+      "interval": "40s",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/.*/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "solana.usd",
+              "text": "Solana Price (USD)",
+              "type": "number"
+            }
+          ],
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "dej6guola0w00c"
+          },
+          "filters": [],
+          "format": "table",
+          "global_query_id": "",
+          "parser": "backend",
+          "refId": "A",
+          "root_selector": "",
+          "source": "url",
+          "type": "json",
+          "url": "/simple/price?ids=solana&vs_currencies=usd",
+          "url_options": {
+            "data": "",
+            "method": "GET"
+          }
+        }
+      ],
+      "timeFrom": "6h",
+      "title": "SOL / USD",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eeidlz2biblkwd"
+      },
+      "description": "Currently not part of the exporter, will need to fix.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 12,
+        "y": 1
+      },
+      "hideTimeOverride": true,
+      "id": 32,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "solana_validator_commission{job=\"solana-public-metrics\", nodekey=\"JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF\"}",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "timeFrom": "30d",
+      "title": "Commission",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eeidlz2biblkwd"
+      },
+      "description": "Current version of JITO MEV-Boost software running on validator.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#0de1ff",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 15,
+        "y": 1
+      },
+      "hideTimeOverride": true,
+      "id": 10,
+      "interval": "1h",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^version$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {
+          "valueSize": 50
+        },
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "solana_node_version{job=\"solana-validator-light\", version=~\".*\"}",
+          "legendFormat": "JITO",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "timeFrom": "1d",
+      "title": "JITO Version",
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "keepLabels": [
+              "version"
+            ]
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eeidlz2biblkwd"
+      },
+      "description": "Time since last system boot. Tracks server stability and maintenance cycles.\n\n• <7 days: Recent reboot or maintenance\n• >90 days: Consider checking for kernel updates\n\nUnexpected drops indicate system crashes or power events.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#00ffa2b0",
+            "mode": "shades"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue"
+              }
+            ]
+          },
+          "unit": "dtdhms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 18,
+        "y": 1
+      },
+      "id": 27,
+      "interval": "1m",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "node_time_seconds - node_boot_time_seconds",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Uptime",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eeidlz2biblkwd"
+      },
+      "description": "Real-time validator health monitoring displaying operational status, network participation (delinquency), and blockchain synchronization (slots behind). All indicators should be green for optimal validator performance and rewards.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
             "mode": "thresholds"
           },
           "fieldMinMax": false,
@@ -227,33 +588,6 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Running"
-            },
-            "properties": [
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "red"
-                    },
-                    {
-                      "color": "red",
-                      "value": 0
-                    },
-                    {
-                      "color": "green",
-                      "value": 1
-                    }
-                  ]
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
               "options": "solana_validator_delinquent"
             },
             "properties": [
@@ -282,8 +616,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 6,
-        "x": 6,
+        "w": 4,
+        "x": 20,
         "y": 1
       },
       "id": 3,
@@ -302,8 +636,8 @@
         },
         "showPercentChange": false,
         "text": {
-          "titleSize": 15,
-          "valueSize": 30
+          "titleSize": 0,
+          "valueSize": 0
         },
         "textMode": "auto",
         "wideLayout": true
@@ -312,7 +646,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "solana_node_is_healthy",
+          "expr": "solana_node_is_healthy{job=\"solana-public-metrics\"}",
           "legendFormat": "Running",
           "range": true,
           "refId": "A"
@@ -323,7 +657,7 @@
             "uid": "eeidlz2biblkwd"
           },
           "editorMode": "code",
-          "expr": "solana_validator_delinquent",
+          "expr": "solana_validator_delinquent{job=\"solana-public-metrics\", nodekey=\"JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF\"}",
           "hide": false,
           "instant": false,
           "legendFormat": "Delinquant",
@@ -337,7 +671,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "solana_node_num_slots_behind",
+          "expr": "solana_node_num_slots_behind{job=\"solana-public-metrics\"}",
           "hide": false,
           "instant": false,
           "legendFormat": "Slots behind",
@@ -353,27 +687,406 @@
         "type": "prometheus",
         "uid": "eeidlz2biblkwd"
       },
+      "description": "Total credits accumulated in current epoch. Resets to zero at epoch boundaries.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#dc1fff",
+            "mode": "shades"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          },
+          "unit": "sishort"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 0,
+        "y": 4
+      },
+      "id": 30,
+      "options": {
+        "legend": {
+          "calcs": [
+            "last",
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "solana_validator_current_epoch_credits{job=\"solana-validator-light\", nodekey=\"JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF\"}",
+          "legendFormat": "Credits earned",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "timeFrom": "3d",
+      "title": "Current Epoch Credits",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "cejuvvydkzoqoc"
+      },
+      "description": "Delegator Stakes Overview (1h refresh)\nShows active delegations to this validator, including:\n- Owner's wallet that controls the stake\n- Amount of SOL delegated via unique stake accounts\n- Withdrawal permissions (may differ from owner for security)",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto",
+              "wrapText": false
+            },
+            "filterable": true,
+            "inspect": false
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Epoch"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 80
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "SOL"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 80
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 150
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 16,
+        "x": 8,
+        "y": 4
+      },
+      "id": 38,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "enablePagination": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "name",
+              "text": "Name",
+              "type": "string"
+            },
+            {
+              "selector": "amount_sol",
+              "text": "SOL",
+              "type": "number"
+            },
+            {
+              "selector": "activation_epoch",
+              "text": "Epoch",
+              "type": "string"
+            },
+            {
+              "selector": "address",
+              "text": "Owner's address",
+              "type": "string"
+            },
+            {
+              "selector": "stake_account",
+              "text": "Stake account",
+              "type": "string"
+            },
+            {
+              "selector": "withdraw_authority",
+              "text": "Withdrawal authority",
+              "type": "string"
+            }
+          ],
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "cejuvvydkzoqoc"
+          },
+          "filters": [],
+          "format": "table",
+          "global_query_id": "",
+          "parser": "backend",
+          "refId": "A",
+          "root_selector": "$[-1].delegators[*]",
+          "source": "url",
+          "type": "json",
+          "url": "",
+          "url_options": {
+            "data": "",
+            "method": "GET"
+          }
+        }
+      ],
+      "title": "Delegators",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eeidlz2biblkwd"
+      },
+      "description": "Credits earned per hour - stable rate indicates consistent voting performance.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#03e1ff",
+            "mode": "shades"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "hidden",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "hue",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
           "fieldMinMax": false,
           "mappings": [],
           "min": 0,
           "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red"
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 8,
+        "x": 0,
+        "y": 10
+      },
+      "id": 12,
+      "interval": "15s",
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "firstNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "increase(solana_validator_total_credits{job=\"solana-validator-light\", nodekey=\"JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF\"}[1h])",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Rate change over 1h",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "timeFrom": "24h",
+      "title": "Validator Credit Earning Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eeidlz2biblkwd"
+      },
+      "description": "Total SOL currently staked to validator - directly affects voting weight and rewards.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "bars",
+            "fillOpacity": 4,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 1,
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
             "mode": "percentage",
             "steps": [
               {
-                "color": "yellow"
-              },
-              {
-                "color": "#EAB839",
-                "value": -1
-              },
-              {
-                "color": "green",
-                "value": 0
+                "color": "green"
               }
             ]
           },
@@ -382,18 +1095,90 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 12,
-        "y": 1
+        "h": 5,
+        "w": 8,
+        "x": 8,
+        "y": 10
       },
       "id": 4,
+      "interval": "15m",
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "  solana_validator_active_stake{job=\"solana-public-metrics\", nodekey=\"JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF\"}",
+          "format": "time_series",
+          "instant": false,
+          "legendFormat": "Validator Active Stake",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "timeFrom": "30d",
+      "title": "Active Stake",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eeidlz2biblkwd"
+      },
+      "description": "Credits earned per 1000 SOL staked - measures validator performance efficiency relative to stake. Higher values indicate better reward generation potential.\n\nvalidator_total_credits / active_stake\n\nThis efficiency metric normalizes credit earning by stake amount. Track this value over time - if it drops significantly while your skip rate remains stable, it could indicate network-wide changes or issues specific to your validator.\n\n*Will look into adding network average for comparison",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "yellow",
+                "value": 70000
+              },
+              {
+                "color": "green",
+                "value": 90000
+              }
+            ]
+          },
+          "unit": "Credits/kSOL"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 8,
+        "x": 16,
+        "y": 10
+      },
+      "id": 31,
       "options": {
         "colorMode": "value",
-        "graphMode": "none",
+        "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
-        "percentChangeColorMode": "same_as_value",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -409,16 +1194,14 @@
       "targets": [
         {
           "editorMode": "code",
-          "exemplar": false,
-          "expr": "solana_validator_active_stake{nodekey=\"JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF\"}",
-          "format": "time_series",
-          "instant": false,
-          "legendFormat": "Validator Active Stake %",
+          "expr": "rate(solana_validator_total_credits{job=\"solana-validator-light\", nodekey=\"JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF\"}[24h]) / \r\nscalar(avg(solana_validator_active_stake{job=\"solana-public-metrics\", nodekey=\"JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF\"}) / 1000000)",
+          "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Active stake",
+      "timeFrom": "30d",
+      "title": "Credit Earning Efficiency",
       "type": "stat"
     },
     {
@@ -426,11 +1209,320 @@
         "type": "prometheus",
         "uid": "eeidlz2biblkwd"
       },
-      "description": "The rate of skipped leader slots as a percentage. This is a critical metric for validator performance, as high skip rates can indicate issues with the validator's ability to produce blocks when it's assigned to do so.\nCheck with command:\nsolana validators | grep JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF\n\nData gaps are generally periods where our validator has no assigned leader slot.\n\nCheck schedule for this epoch with:\nsolana leader-schedule | grep JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF\n\nThen compare to current slot.",
+      "description": "Tracks leader slot assignment and execution for the current epoch. \n\n- Assigned slots represent the total scheduled for this validator: allocated proportionally as [Stake ÷ Total Network Stake × 432,000 Slots] \n- Processed slots are successfully produced blocks\n- Skipped slots are missed opportunities. \n\nSlots are assigned in groups of 4 consecutive slots; stake percentage can be estimated as [Assigned Slots ÷ 432,000 × 100].\n\nSkip Rates: The lines track the percentage of missed slots for this validator (red) vs. the entire cluster (white). Gaps represent periods when no leader slots were scheduled.\n\n*Bug to fix. Data persistency after exporter restart (causing the decrease in value as counter starts from 0 again)",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          },
+          "unit": "Slots"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Assigned leader slots for this Epoch"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#03e1ff",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Processed slots"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#00ffa3",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Skipped slots"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Validator skip rate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-red",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    0,
+                    10
+                  ],
+                  "fill": "dot"
+                }
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cluster skip rate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "text",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 1
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    0,
+                    10
+                  ],
+                  "fill": "dot"
+                }
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Assigned leader slots perEpoch"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#dc1fff",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Processed slots this Epoch"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#00ffa3",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Skipped slots this Epoch"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 13,
+        "w": 24,
+        "x": 0,
+        "y": 15
+      },
+      "id": 37,
+      "maxDataPoints": 5000,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max",
+            "mean",
+            "p95",
+            "stdDev"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "max by(nodekey) (\r\n  solana_validator_assigned_leader_slots{nodekey=\"JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF\"}\r\n)",
+          "hide": false,
+          "legendFormat": "Assigned leader slots perEpoch",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "solana_validator_leader_slots_total{nodekey=\"JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF\", status=\"valid\"}",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Processed slots this Epoch",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "solana_validator_leader_slots_total{nodekey=\"JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF\", status=\"skipped\"}",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Skipped slots this Epoch",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "(\r\n  sum(rate(solana_validator_leader_slots_total{job=\"solana-validator-light\", status=\"skipped\"}[1h])) / \r\n  sum(rate(solana_validator_leader_slots_total{job=\"solana-validator-light\"}[1h])) * 100\r\n) or vector(NaN)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Validator skip rate",
+          "range": true,
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "(\r\n  sum(rate(solana_cluster_slots_by_epoch_total{job=\"solana-public-metrics\", status=\"skipped\"}[1h])) / \r\n  sum(rate(solana_cluster_slots_by_epoch_total{job=\"solana-public-metrics\"}[1h])) * 100\r\n) or vector(NaN)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Cluster skip rate",
+          "range": true,
+          "refId": "E"
+        }
+      ],
+      "timeFrom": "3d",
+      "title": "Leader Slot Performance",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eeidlz2biblkwd"
+      },
+      "description": "- Identity Account: Operational account that pays for vote transaction fees (~0.01 SOL/day) and receives priority fees when producing blocks as leader. Should maintain >10 SOL for continued operation.\n- Vote Account: Accumulates commission earnings from delegator rewards based on commission rate. If commission is set to 100%, all rewards go here instead of  delegator's stake account. Rewards are paid out at the beginning of each new epoch.\n- Stake Account(s): Where delegated SOL are held and individual staking rewards accumulate.\n- Withdrawer account: Has authority to move accumulated commission from Vote account. Kept offline for security.\n- Key Metrics: Monitor identity for operational funds, vote account for accumulated commission, and stake accounts for delegation status. Commission settings directly impact reward distribution.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
           },
           "custom": {
             "axisBorderShow": true,
@@ -439,20 +1531,18 @@
             "axisGridShow": false,
             "axisLabel": "",
             "axisPlacement": "auto",
-            "axisSoftMax": 0,
-            "axisSoftMin": 0,
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "scheme",
+            "fillOpacity": 0,
+            "gradientMode": "none",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
             },
             "insertNulls": false,
-            "lineInterpolation": "linear",
+            "lineInterpolation": "smooth",
             "lineWidth": 2,
             "pointSize": 5,
             "scaleDistribution": {
@@ -477,20 +1567,1485 @@
                 "color": "green"
               },
               {
-                "color": "#2a9d8f",
-                "value": 0.5
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "SOL"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 10,
+        "x": 0,
+        "y": 28
+      },
+      "hideTimeOverride": false,
+      "id": 35,
+      "interval": "1m",
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "min",
+            "delta"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "solana_account_balance{address=\"JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF\"}",
+          "legendFormat": "Identity",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "solana_account_balance{address=\"3TEX5gBjcZCzAz3AYT2BQrwpDTSUd5FtszPs7yx9iGGL\"}",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Vote",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "solana_account_balance{address=\"AdeppeEjv1CfuNA3N1H66CFUXubTKhN9JHgS3fD1kYf8\"}",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Withdrawer",
+          "range": true,
+          "refId": "C"
+        }
+      ],
+      "timeFrom": "3d",
+      "title": "Validator Account Balances (SOL)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eeidlz2biblkwd"
+      },
+      "description": "Vote Distance (current_slot - last_vote_slot)\n- Measures how quickly the validator votes on new blocks\n- Ideal range: 1-5 slots (lower is better)\n- Consistent low values show the validator is keeping up with the network\n- High values (>10) may indicate network connectivity issues or validator performance problems\n\nRoot Distance (last_vote_slot - root_slot)\n- Tracks the gap between latest votes and confirmed immutable blocks (roots)\n- Normal range: ~20-50 slots depending on network conditions\n- Directly related to the validator's tower height - a stability mechanism tracking consecutive votes\n\nTower Height is the count of consecutive votes the validator has made, which increases lockout periods and creates finality. A healthy tower produces stable root distance values, while tower rebuilds can cause sudden root distance changes.\n\nCorrelation between spikes in both metrics often indicates network-wide events, while divergence may point to validator-specific issues.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "stepBefore",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
               },
               {
-                "color": "#e9c46a",
-                "value": 1.1
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "Slots"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 14,
+        "x": 10,
+        "y": 28
+      },
+      "id": 36,
+      "interval": "3s",
+      "maxDataPoints": 5000,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max",
+            "mean",
+            "stdDev",
+            "p95"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "  solana_validator_vote_distance{job=\"solana-validator-light\"}",
+          "legendFormat": "Vote distance",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "solana_validator_root_distance{job=\"solana-validator-light\"}",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Root distance",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "timeFrom": "1h",
+      "timeShift": "3s",
+      "title": "Vote & Root distance",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 37
+      },
+      "id": 7,
+      "panels": [],
+      "title": "Hardware metrics",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eeidlz2biblkwd"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
               },
               {
-                "color": "#f4a261",
-                "value": 3
+                "color": "orange",
+                "value": 80
               },
               {
-                "color": "#e76f51",
+                "color": "red",
+                "value": 90
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 8,
+        "x": 0,
+        "y": 38
+      },
+      "id": 15,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "100 - ((node_filesystem_avail_bytes{mountpoint=\"/mnt/accounts\"} / node_filesystem_size_bytes{mountpoint=\"/mnt/accounts\"}) * 100)",
+          "legendFormat": "Accounts partition",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "100 - ((node_filesystem_avail_bytes{mountpoint=\"/mnt/ledger\"} / node_filesystem_size_bytes{mountpoint=\"/mnt/ledger\"}) * 100)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Ledger partition",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "100 - ((node_filesystem_avail_bytes{mountpoint=\"/mnt/snapshots\",} / node_filesystem_size_bytes{mountpoint=\"/mnt/snapshots\"}) * 100)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Snapshots partition",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "100 - ((node_filesystem_avail_bytes{mountpoint=\"/\",} / node_filesystem_size_bytes{mountpoint=\"/\"}) * 100)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Root partition",
+          "range": true,
+          "refId": "D"
+        }
+      ],
+      "title": "Disk space",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eeidlz2biblkwd"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "#EAB839",
+                "value": 60
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 8,
+        "y": 38
+      },
+      "id": 13,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "100 - (avg by (instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "CPU Usage",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eeidlz2biblkwd"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "#EAB839",
+                "value": 60
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 11,
+        "y": 38
+      },
+      "id": 14,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "100 * (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes))",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "RAM Usage",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eeidlz2biblkwd"
+      },
+      "description": "Combined rate of swap operations (pages/sec). For Solana validators, this should ALWAYS be zero.\n\nAny non-zero value indicates memory pressure that can severely impact validator performance.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 0.01
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 14,
+        "y": 38
+      },
+      "hideTimeOverride": true,
+      "id": 26,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "rate(node_vmstat_pswpin[5m]) + rate(node_vmstat_pswpout[5m])",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "timeFrom": "1w",
+      "title": "Swap activity",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eeidlz2biblkwd"
+      },
+      "description": "Critical hardware temperatures. NVMe drives perform best below 50°C.\nThis CPU is designed to run at 95°C 24/7 as confirmed by Fiberstate and AMD.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "orange",
+                "value": 50
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CPU"
+            },
+            "properties": [
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 95
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 7,
+        "x": 17,
+        "y": 38
+      },
+      "id": 22,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "node_hwmon_temp_celsius{chip=\"pci0000:00_0000:00:18_3\",sensor=\"temp1\"}",
+          "legendFormat": "CPU",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "node_hwmon_temp_celsius{chip=\"nvme_nvme0\",sensor=\"temp1\"}",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Ledger",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "node_hwmon_temp_celsius{chip=\"nvme_nvme1\",sensor=\"temp1\"}",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Accounts",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "node_hwmon_temp_celsius{chip=\"nvme_nvme2\",sensor=\"temp1\"}",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "OS/Snapshots",
+          "range": true,
+          "refId": "D"
+        }
+      ],
+      "title": "Temperatures",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eeidlz2biblkwd"
+      },
+      "description": "Acounts drive (nvme1n1) operations and utilization. Stores validator account data with periodic verification spikes.\n\nKey Metrics:\n- Write IOPS: Typically low (5-30 IOPS), spikes during updates\n- Read IOPS: Regular spikes every ~3h for verification are normal\n- Disk Utilization: Low (<1%) with headroom for growth\n\nWarning Signs:\n- Missing scheduled read verification spikes\n- Disk Utilization >50% sustained\n- Unusual write activity patterns",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "log": 10,
+              "type": "log"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 1000
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Read IOPS"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Utilization %"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Disk Utilization %"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Disk use %"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 8,
+        "x": 0,
+        "y": 42
+      },
+      "hideTimeOverride": true,
+      "id": 16,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "min",
+            "mean",
+            "p95",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "rate(node_disk_reads_completed_total{device=\"nvme1n1\"}[5m])",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Read IOPS",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "rate(node_disk_writes_completed_total{device=\"nvme1n1\"}[5m])",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Write IOPS",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "rate(node_disk_io_time_seconds_total{device=\"nvme1n1\"}[5m]) * 100",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Disk use %",
+          "range": true,
+          "refId": "C"
+        }
+      ],
+      "timeFrom": "12h",
+      "title": "Accounts Drive (nvme0n1) IOPS - Usage",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eeidlz2biblkwd"
+      },
+      "description": "Ledger drive (nvme0n1) operations and utilization. Stores blockchain history with continuous write activity.\n\nKey Metrics:\n- Write IOPS: Steady 300-600 range for healthy validator\n- Read IOPS: Variable 5-100 based on RPC activity\n- Disk Utilization: ~10-15% is normal, grows over time\n\nWarning Signs:\n- Write IOPS dropping below 300 for extended periods\n- Disk Utilization >70% sustained\n- Latency increases during high throughput",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "log": 2,
+              "type": "log"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 1000
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Read IOPS"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Utilization %"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Disk Utilization %"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Disk use %"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Write IOPS"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 8,
+        "x": 8,
+        "y": 42
+      },
+      "hideTimeOverride": true,
+      "id": 17,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "min",
+            "mean",
+            "p95",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "rate(node_disk_reads_completed_total{device=\"nvme0n1\"}[5m])",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Read IOPS",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "rate(node_disk_writes_completed_total{device=\"nvme0n1\"}[5m])",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Write IOPS",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "rate(node_disk_io_time_seconds_total{device=\"nvme0n1\"}[5m]) * 100",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Disk use %",
+          "range": true,
+          "refId": "C"
+        }
+      ],
+      "timeFrom": "12h",
+      "title": "Ledger drive (nvme1n1) IOPS + Usage",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eeidlz2biblkwd"
+      },
+      "description": "OS/Snapshots drive (nvme2n1) operations and utilization. Contains system, swap, and snapshot data.\n\nKey Metrics:\n- Write IOPS: Spikes during snapshot downloads/system updates\n- Read IOPS: Variable based on system activity\n- Disk Utilization: Low utilization with occasional spikes\n\nWarning Signs:\n- Sustained high disk utilization >50%\n- Continuous high I/O outside snapshot operations\n- Low free space on critical partitions",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "log": 10,
+              "type": "log"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 1000
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Read IOPS"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Utilization %"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Disk Utilization %"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Disk use %"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 8,
+        "x": 16,
+        "y": 42
+      },
+      "hideTimeOverride": true,
+      "id": 18,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "min",
+            "mean",
+            "p95",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "rate(node_disk_reads_completed_total{device=\"nvme2n1\"}[5m])",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Read IOPS",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "rate(node_disk_writes_completed_total{device=\"nvme2n1\"}[5m])",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Write IOPS",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "rate(node_disk_io_time_seconds_total{device=\"nvme2n1\"}[5m]) * 100",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Disk use %",
+          "range": true,
+          "refId": "C"
+        }
+      ],
+      "timeFrom": "12h",
+      "title": "OS/Snapshots drive (nvme2n1) IOPS + Usage",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eeidlz2biblkwd"
+      },
+      "description": "System load averages represent CPU demand (running + waiting processes).\n   \n- 1-minute avg: Immediate system pressure\n- 5-minute avg: Short-term trends\n- 15-minute avg: Sustained system pressure\n   \nFor this 32-thread CPU:\n- Below 24: Normal operation\n- 24-32: High utilization but within capacity\n- Above 32: System under pressure, potential performance impact.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "log": 2,
+              "type": "log"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "yellow",
+                "value": 24
+              },
+              {
+                "color": "red",
+                "value": 32
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "1-minute load average"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "15-minute load average"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 52
+      },
+      "hideTimeOverride": true,
+      "id": 23,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "node_load1",
+          "legendFormat": "1-minute average",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "node_load5",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "5-minute average",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "node_load15",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "15-minute average",
+          "range": true,
+          "refId": "C"
+        }
+      ],
+      "timeFrom": "12h",
+      "title": "CPU Load",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eeidlz2biblkwd"
+      },
+      "description": "Percentage of CPU time spent waiting for disk operations. High values indicate storage bottlenecks that can impact validator performance.\n   \n- 0-5%: Healthy operation\n- 5-10%: Moderate disk pressure\n- Above 10%: Significant disk bottleneck\n   \nSpikes during leader slots are normal, but sustained high values require investigation.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "hue",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "yellow",
                 "value": 5
+              },
+              {
+                "color": "red",
+                "value": 10
               }
             ]
           },
@@ -500,16 +3055,118 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 16,
-        "x": 0,
-        "y": 4
+        "w": 12,
+        "x": 12,
+        "y": 52
       },
-      "id": 5,
-      "interval": "15s",
+      "hideTimeOverride": true,
+      "id": 24,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "avg(rate(node_cpu_seconds_total{mode=\"iowait\"}[5m])) * 100",
+          "legendFormat": "I/O Wait percentage across all CPU cores",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "timeFrom": "12h",
+      "title": "I/O Wait percentage across all CPU cores",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eeidlz2biblkwd"
+      },
+      "description": "Current number of open file descriptors. Solana validators typically use thousands of file handles.\n\nDefault Linux soft limit: ~65,536\n\nMonitor for steady growth which may indicate resource leaks.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "hue",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "yellow",
+                "value": 100000
+              },
+              {
+                "color": "red",
+                "value": 200000
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 59
+      },
+      "id": 25,
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
+            "p95",
             "max"
           ],
           "displayMode": "table",
@@ -526,8 +3183,132 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "rate(solana_validator_leader_slots_total{nodekey=\"JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF\",status=\"skipped\"}[5m])",
-          "legendFormat": "Validator Skip Rate",
+          "expr": "node_filefd_allocated",
+          "legendFormat": "Open File Descriptors",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "File Descriptors",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 67
+      },
+      "id": 8,
+      "panels": [],
+      "title": "Network metrics",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eeidlz2biblkwd"
+      },
+      "description": "Current network throughput. Solana validators typically see spikes during leader slots.\n\nKey Metrics:\n- Current Transmit/Receive: Real-time network usage\n- Warning Signs: Sustained high utilization or unexpected drops",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 1
+              },
+              {
+                "color": "green",
+                "value": 10
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 68
+      },
+      "hideTimeOverride": true,
+      "id": 19,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "min",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "rate(node_network_receive_bytes_total{device=\"enp11s0f1np1\"}[5m]) / 1024 / 1024",
+          "legendFormat": "Current Receive (MB/s)",
           "range": true,
           "refId": "A"
         },
@@ -537,56 +3318,379 @@
             "uid": "eeidlz2biblkwd"
           },
           "editorMode": "code",
-          "expr": "(\r\n  sum(rate(solana_validator_leader_slots_total{status=\"skipped\"}[5m]))\r\n  /\r\n  sum(rate(solana_validator_leader_slots_total{}[5m]))\r\n) * 100",
+          "expr": "rate(node_network_transmit_bytes_total{device=\"enp11s0f1np1\"}[5m]) / 1024 / 1024",
           "hide": false,
           "instant": false,
-          "legendFormat": "Cluster's average Skip rate",
+          "legendFormat": "Current Transmit (MB/s)",
           "range": true,
           "refId": "B"
         }
       ],
       "timeFrom": "12h",
-      "title": "Skip rate",
+      "title": "Current Network Bandwidth in Mega Bytes",
       "type": "timeseries"
     },
     {
-      "collapsed": true,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 11
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eeidlz2biblkwd"
       },
-      "id": 9,
-      "panels": [],
-      "title": "System metrics",
-      "type": "row"
+      "description": "Shows actual packet counts with issues. For reference:\n- Normal: 0-10 drops per 5min (negligible impact)\n- Concerning: >100 drops per 5min (investigate if persistent)\n- Critical: >1000 drops per 5min (immediate investigation needed)",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": 0,
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 4,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "log": 2,
+              "type": "log"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Receive Errors"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Transmit Errors"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Packets Dropped"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{device=\"enp11s0f1np1\", instance=\"38.97.62.158:9110\", job=\"node_validator\"}"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total Packets Received (Count)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total Packets Transmitted"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total Packets Received"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 68
+      },
+      "hideTimeOverride": true,
+      "id": 21,
+      "interval": "15s",
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "increase(node_network_receive_errs_total{device=\"enp11s0f1np1\"}[5m])",
+          "legendFormat": "Receive Errors",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "increase(node_network_transmit_errs_total{device=\"enp11s0f1np1\"}[5m])",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Transmit Errors",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "increase(node_network_receive_drop_total{device=\"enp11s0f1np1\"}[5m])",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Packets Dropped",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "increase(node_network_receive_packets_total{device=\"enp11s0f1np1\"}[5m])",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Total Packets Received",
+          "range": true,
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "increase(node_network_transmit_packets_total{device=\"enp11s0f1np1\"}[5m])",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Total Packets Transmitted",
+          "range": true,
+          "refId": "E"
+        }
+      ],
+      "timeFrom": "12h",
+      "title": "Network Quality",
+      "type": "timeseries"
     },
     {
-      "collapsed": true,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 12
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eeidlz2biblkwd"
       },
-      "id": 7,
-      "panels": [],
-      "title": "Hardware metrics",
-      "type": "row"
-    },
-    {
-      "collapsed": true,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 13
+      "description": "Network data usage metrics for capacity planning. Solana validators typically transfer 30-100TB per month depending on network activity.\n\nKey Insights:\n- Daily usage provides early warning of traffic spikes\n- Monthly usage helps track datacenter bandwidth limits\n- Receive/transmit ratio should typically be ~1.5:1\n\nThe current max per month is 330TB for this server.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue"
+              }
+            ]
+          }
+        },
+        "overrides": []
       },
-      "id": 8,
-      "panels": [],
-      "title": "Network Metrics",
-      "type": "row"
+      "gridPos": {
+        "h": 4,
+        "w": 12,
+        "x": 0,
+        "y": 76
+      },
+      "hideTimeOverride": true,
+      "id": 20,
+      "interval": "5m",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "increase(node_network_receive_bytes_total{device=\"enp11s0f1np1\"}[24h]) / 1024 / 1024 / 1024 / 1024",
+          "legendFormat": "Daily Received",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "increase(node_network_transmit_bytes_total{device=\"enp11s0f1np1\"}[24h]) / 1024 / 1024 / 1024 / 1024",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Daily Transmitted",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "increase(node_network_receive_bytes_total{device=\"enp11s0f1np1\"}[30d]) / 1024 / 1024 / 1024 / 1024",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Monthly Received",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "eeidlz2biblkwd"
+          },
+          "editorMode": "code",
+          "expr": "increase(node_network_transmit_bytes_total{device=\"enp11s0f1np1\"}[30d]) / 1024 / 1024 / 1024 / 1024",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Monthly Transmitted",
+          "range": true,
+          "refId": "D"
+        }
+      ],
+      "timeFrom": "30d",
+      "title": "Data consumption in Terra Bytes",
+      "transparent": true,
+      "type": "stat"
     }
   ],
   "preload": false,
@@ -603,5 +3707,5 @@
   "timezone": "utc",
   "title": "Testnet validator",
   "uid": "aej5w2b502scgc",
-  "version": 42
+  "version": 192
 }
