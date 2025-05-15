@@ -70,6 +70,10 @@ This project serves as my first learning platform for blockchain infrastructure.
 - **Features**:
   - Full node operation
   - Network monitoring
+  - Transaction fee metrics collection
+- **Planned Improvements**:
+  - Enhanced fee estimation using blended approach (mempool + historical data)
+  - Improved fee prediction accuracy for various confirmation targets
 
 ## Infrastructure
 

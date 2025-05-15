@@ -41,7 +41,7 @@ Validator keys are managed using secure cold storage procedures:
 | Location | Fiberstate Datacenter |
 
 ## 🔧 Core Services
-- **Validator**: [JITO](services/jito.md) (Solana client with MEV capabilities)
+- **Validator**: [JITO](services/jito.md) (v2.2.13 - [upgrade instructions](setup-tutorials/upgrade-jito.md)) - Solana client with MEV capabilities
 - **Previous Implementation**: [Agave](services/agave.md) (Standard Solana client)
 - **Monitoring**: 
   - [Node Exporter](services/monitoring/node-exporter.md) - System metrics collection
@@ -75,6 +75,16 @@ sudo systemctl {start|stop|restart} validator.service
 sudo sed -i 's/VALIDATOR_TYPE=jito/VALIDATOR_TYPE=agave/' /etc/default/validator  # Switch to Agave
 sudo sed -i 's/VALIDATOR_TYPE=agave/VALIDATOR_TYPE=jito/' /etc/default/validator  # Switch to JITO
 sudo systemctl restart validator.service
+
+# Version Management
+/home/sol/validators/jito/active --version  # Check current version
+ls -l /home/sol/validators/jito/versions/   # List available versions
+
+# Upgrade Process (as admin)
+sudo systemctl stop validator.service
+sudo rm /home/sol/validators/jito/active  # Remove old symlink
+sudo ln -sf /home/sol/validators/jito/versions/VERSION/agave-validator /home/sol/validators/jito/active  # Create new symlink
+sudo systemctl start validator.service
 
 # Monitoring
 grep -a "tip" /home/sol/validators/data/log/validator.log | grep "payment"  # Check JITO MEV activity

@@ -10,6 +10,7 @@ import aiohttp
 import asyncio
 from decimal import Decimal
 import sys
+import math
 
 # Load environment variables
 load_dotenv()
@@ -164,6 +165,65 @@ async def collect_utxo_stats():
     except Exception as e:
         print(f"[UTXO] Error in UTXO stats collection: {str(e)}", flush=True)
 
+def get_safe_fee_estimate(rpc, blocks, priority_level='low'):
+    """
+    Get a safe fee estimate using multiple estimation methods.
+    
+    Args:
+        rpc: RPC connection object
+        blocks: Number of blocks target for confirmation
+        priority_level: 'high', 'medium', or 'low'
+    
+    Returns:
+        int: Estimated fee rate in sat/vB, or None if estimation fails
+    """
+    estimates = []
+    
+    try:
+        # Get conservative estimate (tends to be higher/safer)
+        conservative = rpc.estimatesmartfee(blocks, "CONSERVATIVE")
+        if 'feerate' in conservative:
+            estimates.append(Decimal(str(conservative['feerate'])))
+            print(f"[Fees] {priority_level} conservative ({blocks} blocks): {conservative['feerate']:.8f} BTC/kB", flush=True)
+        
+        # Get economical estimate
+        economical = rpc.estimatesmartfee(blocks)
+        if 'feerate' in economical:
+            estimates.append(Decimal(str(economical['feerate'])))
+            print(f"[Fees] {priority_level} economical ({blocks} blocks): {economical['feerate']:.8f} BTC/kB", flush=True)
+        
+        # For high priority, check adjacent block targets
+        if priority_level == 'high':
+            # Check 1-2 blocks for high priority
+            for adj_blocks in [1, 2]:
+                adj_estimate = rpc.estimatesmartfee(adj_blocks, "CONSERVATIVE")
+                if 'feerate' in adj_estimate:
+                    estimates.append(Decimal(str(adj_estimate['feerate'])))
+                    print(f"[Fees] {priority_level} adjacent ({adj_blocks} blocks): {adj_estimate['feerate']:.8f} BTC/kB", flush=True)
+        
+        if not estimates:
+            print(f"[Fees] Warning: No valid fee estimates for {priority_level} priority", flush=True)
+            return None
+        
+        # Convert to sat/vB with safety margins
+        max_fee = max(estimates)
+        margin = Decimal(str({
+            'high': '1.2',    # 20% margin for high priority
+            'medium': '1.1',  # 10% margin for medium priority
+            'low': '1.0'      # No margin for low priority
+        }.get(priority_level, '1.0')))
+        
+        # Convert BTC/kB to sat/vB: multiply by 100000
+        # 1 BTC = 100000000 sats, 1 kB = 1000 bytes
+        # So BTC/kB * 100000 = sat/vB
+        final_fee = int(math.ceil(float(max_fee * Decimal('100000') * margin)))  # Convert to sat/vB and apply margin
+        print(f"[Fees] {priority_level} final estimate: {final_fee} sat/vB (margin: {margin}x)", flush=True)
+        return final_fee
+        
+    except Exception as e:
+        print(f"[Fees] Error estimating {priority_level} priority fee: {str(e)}", flush=True)
+        return None
+
 async def collect_regular_metrics():
     """Collect all metrics except UTXO stats"""
     try:
@@ -241,18 +301,27 @@ async def collect_regular_metrics():
             BITCOIN_MEMPOOL_USAGE.set(mempool_info['usage'])
             
             # Get fee estimates for different priorities
-            high_priority = rpc.estimatesmartfee(1)
-            if 'feerate' in high_priority:
-                BITCOIN_FEE_HIGH.set(high_priority['feerate'] * 100000)
+            try:
+                # High priority (next 1-2 blocks)
+                fee_high = get_safe_fee_estimate(rpc, 1, 'high')
+                if fee_high is not None:
+                    BITCOIN_FEE_HIGH.set(fee_high)
+                
+                # Medium priority (next 3 blocks)
+                fee_medium = get_safe_fee_estimate(rpc, 3, 'medium')
+                if fee_medium is not None:
+                    BITCOIN_FEE_MEDIUM.set(fee_medium)
+                
+                # Low priority (next 6 blocks)
+                fee_low = get_safe_fee_estimate(rpc, 6, 'low')
+                if fee_low is not None:
+                    BITCOIN_FEE_LOW.set(fee_low)
+                
+                print(f"[Metrics] Final fee estimates - High: {fee_high} sat/vB, Medium: {fee_medium} sat/vB, Low: {fee_low} sat/vB", flush=True)
             
-            medium_priority = rpc.estimatesmartfee(3)
-            if 'feerate' in medium_priority:
-                BITCOIN_FEE_MEDIUM.set(medium_priority['feerate'] * 100000)
-            
-            low_priority = rpc.estimatesmartfee(6)
-            if 'feerate' in low_priority:
-                BITCOIN_FEE_LOW.set(low_priority['feerate'] * 100000)
-            
+            except Exception as e:
+                print(f"[Metrics] Error estimating fees: {str(e)}", flush=True)
+
             print("[Metrics] Successfully collected mempool metrics", flush=True)
         except Exception as e:
             print(f"[Metrics] Error collecting mempool metrics: {str(e)}", flush=True)
@@ -316,7 +385,8 @@ async def collect_regular_metrics():
         try:
             # Get network info including version details
             network_info = rpc.getnetworkinfo()
-            version_string = network_info['subversion'].replace('/', '').replace(':', '')
+            # Clean up version string - remove parentheses and quotes
+            version_string = network_info['subversion'].replace('/', '').replace(':', '').strip("()'")
             
             # Parse numeric version
             version = network_info['version']
@@ -329,37 +399,27 @@ async def collect_regular_metrics():
             BITCOIN_VERSION_MINOR.set(minor_version)
             BITCOIN_VERSION_PATCH.set(patch_version)
             
-            # Clear any previous version metrics
-            for label in BITCOIN_VERSION._metrics:
-                BITCOIN_VERSION.remove(label)
-            
-            # Set the current version
+            # Set the current version with cleaned string
             BITCOIN_VERSION.labels(version=version_string).set(1)
             
-            # Clear any previous text version metrics
-            for label in BITCOIN_VERSION_TEXT._metrics:
-                BITCOIN_VERSION_TEXT.remove(label)
-                
             # Set text version for easy display
-            BITCOIN_VERSION_TEXT.labels(text=f"v{major_version}.{minor_version}.{patch_version} ({version_string})").set(1)
+            version_text = f"v{major_version}.{minor_version}.{patch_version} ({version_string})"
+            BITCOIN_VERSION_TEXT.labels(text=version_text).set(1)
             
-            # Create a set of specialized metrics just for the version string components
-            # These will have the version number as the value itself, not as a label
+            # Version as decimal number
             version_num = float(f"{major_version}.{minor_version}{patch_version/100:.2f}".replace('.0', ''))
             
-            # Create or update version gauges that store version information as values
-            version_gauge_name = 'BITCOIN_VERSION_NUMBER'
-            if not hasattr(sys.modules[__name__], version_gauge_name):
-                setattr(sys.modules[__name__], version_gauge_name, 
+            # Set version number metric
+            if not hasattr(sys.modules[__name__], 'BITCOIN_VERSION_NUMBER'):
+                setattr(sys.modules[__name__], 'BITCOIN_VERSION_NUMBER', 
                       Gauge('bitcoin_version_number', 'Bitcoin Core version as a decimal number'))
-            getattr(sys.modules[__name__], version_gauge_name).set(version_num)
+            getattr(sys.modules[__name__], 'BITCOIN_VERSION_NUMBER').set(version_num)
             
-            # Create a gauge for the full version string
-            full_version_name = 'BITCOIN_FULL_VERSION_STRING'
-            if not hasattr(sys.modules[__name__], full_version_name):
-                setattr(sys.modules[__name__], full_version_name, 
+            # Set full version string metric
+            if not hasattr(sys.modules[__name__], 'BITCOIN_FULL_VERSION_STRING'):
+                setattr(sys.modules[__name__], 'BITCOIN_FULL_VERSION_STRING', 
                       Gauge('bitcoin_full_version_string', f'Running Bitcoin Core {version_string}'))
-            getattr(sys.modules[__name__], full_version_name).set(1)
+            getattr(sys.modules[__name__], 'BITCOIN_FULL_VERSION_STRING').set(1)
             
             print(f"[Metrics] Bitcoin Core version: {version_string} (v{major_version}.{minor_version}.{patch_version}) = {version_num}", flush=True)
         except Exception as e:
