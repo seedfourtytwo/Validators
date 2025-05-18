@@ -5,7 +5,7 @@ import os
 import requests
 
 # Directory for output files
-output_dir = "/home/chris/solana-monitoring/solana-exporter"
+output_dir = os.path.dirname(os.path.abspath(__file__))
 os.makedirs(output_dir, exist_ok=True)
 
 # Your vote account
@@ -102,21 +102,6 @@ def get_delegators():
 # Get current data
 delegators, total_stake = get_delegators()
 
-# Sort by amount (highest first)
-delegators.sort(key=lambda x: x.get('amount_sol', 0), reverse=True)
-
-# Calculate total captured stake
-total_captured_stake = sum(d.get('amount_sol', 0) for d in delegators)
-
-# Create the current data point
-current_data = {
-    "timestamp": datetime.datetime.now().isoformat(),
-    "total_delegators": len(delegators),
-    "total_stake_reported": total_stake,
-    "total_stake_captured": total_captured_stake,
-    "delegators": delegators
-}
-
 # Read existing data if it exists
 output_file = os.path.join(output_dir, "delegators.json")
 historical_data = []
@@ -130,6 +115,49 @@ if os.path.exists(output_file):
                 historical_data = [existing_data]
     except json.JSONDecodeError:
         historical_data = []
+
+# Sort by epoch (highest first)
+delegators.sort(key=lambda x: int(x.get('activation_epoch', 0)), reverse=True)
+
+# Mark all current delegators as 'staking'
+for d in delegators:
+    d['status'] = 'staking'
+
+# Load previous delegators from the last data point (if any)
+previous_delegators = []
+if historical_data:
+    previous_delegators = historical_data[-1].get('delegators', [])
+
+previous_accounts = set(d['stake_account'] for d in previous_delegators)
+current_accounts = set(d['stake_account'] for d in delegators)
+
+# Find unstaking accounts
+unstaking_accounts = previous_accounts - current_accounts
+
+# Add unstaking accounts to the output with status 'unstaking'
+for d in previous_delegators:
+    if d['stake_account'] in unstaking_accounts:
+        d_copy = d.copy()
+        d_copy['status'] = 'unstaking'
+        delegators.append(d_copy)
+
+# Calculate total captured stake
+def safe_float(val):
+    try:
+        return float(val)
+    except (TypeError, ValueError):
+        return 0.0
+
+total_captured_stake = sum(safe_float(d.get('amount_sol', 0)) for d in delegators)
+
+# Create the current data point
+current_data = {
+    "timestamp": datetime.datetime.now().isoformat(),
+    "total_delegators": len(delegators),
+    "total_stake_reported": total_stake,
+    "total_stake_captured": total_captured_stake,
+    "delegators": delegators
+}
 
 # Add current data to historical data
 historical_data.append(current_data)

@@ -68,7 +68,7 @@ scrape_configs:
   - job_name: 'solana-validator'
     static_configs:
       - targets: ['38.97.62.158:9100']
-  - job_name: 'node_validator'
+  - job_name: 'node-validator'
     static_configs:
       - targets: ['38.97.62.158:9110']
     scrape_interval: 15s

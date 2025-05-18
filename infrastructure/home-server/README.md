@@ -18,8 +18,8 @@ This server serves as the primary infrastructure for running the Monitoring stac
 
 ### Currently Running
 - Monitoring Stack
-  - [Grafana](./services/grafana/README.md)
-  - [Prometheus](./services/prometheus.md)
+  - [Grafana](./services/monitoring/grafana/README.md)
+  - [Prometheus](./services/monitoring/prometheus/prometheus.md)
   - [Docker Infrastructure](./services/docker.md)
   - [Solana Exporter Public](./services/monitoring/solana-exporter-public/solana-exporter-public.md)
   - [Delegator Tracker](./services/monitoring/delegator-tracker/README.md) - Near real-time tracking of validator delegations
@@ -33,7 +33,7 @@ This server serves as the primary infrastructure for running the Monitoring stac
 - `/setup-tutorials/` - Installation and setup guides
   - [Solana Exporter Setup](./setup-tutorials/solana-exporter.md)
   - [Prometheus Setup](./setup-tutorials/prometheus.md)
-  - [Grafana Setup](./setup-tutorials/graphana.md)
+  - [Grafana Setup](./setup-tutorials/grafana.md)
   - [Docker Setup](./setup-tutorials/docker.md)
 - `/services/` - Service configurations and documentation
   - `/monitoring/` - Monitoring service configurations

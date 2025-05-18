@@ -249,7 +249,7 @@ To update Solana Exporter to a new version:
 2. Update the code:
    ```bash
    cd /home/chris/solana-monitoring
-   git pull https://github.com/asymmetric-research/solana-exporter.git
+   git pull https://github.com/seedfourtytwo/solana-exporter.git
    cd solana-exporter
    go build
    ```

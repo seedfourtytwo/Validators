@@ -271,4 +271,4 @@ The `-comprehensive-vote-account-tracking` flag causes the exporter to track all
 - [Solana Exporter Documentation](../services/monitoring/solana-exporter-public/solana-exporter-public.md) - Full documentation for the home server Solana exporter
 - [Validator-side Solana Exporter](../../solana-validator/services/monitoring/solana-exporter.md) - Documentation for the light-mode Solana exporter on the validator
 - [Prometheus Setup Guide](prometheus.md) - Guide for setting up Prometheus monitoring
-- [Grafana Setup Guide](graphana.md) - Guide for setting up Grafana dashboards 
+- [Grafana Setup Guide](grafana.md) - Guide for setting up Grafana dashboards 
