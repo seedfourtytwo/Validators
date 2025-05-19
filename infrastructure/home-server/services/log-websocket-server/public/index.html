@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Solana Exporter Live Logs</title>
+  <style>
+    html, body { height: 100%; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #181818; color: #e0e0e0; margin: 0; overflow: hidden; }
+    #log {
+      height: 96vh;
+      overflow-y: auto;
+      background: #222;
+      padding: 1em;
+      border: 1px solid #333;
+      margin: 1em;
+      font-size: 15px;
+      box-sizing: border-box;
+    }
+    .log-entry {
+      margin-bottom: 0.5em;
+      padding: 0.7em 1em;
+      border-radius: 7px;
+      background: #23272e;
+      border-left: 5px solid #444;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2em;
+      box-shadow: 0 1px 2px #0002;
+      transition: background 0.2s;
+    }
+    .log-info { border-left-color: #2ecc40; }
+    .log-warn { border-left-color: #ffdc00; }
+    .log-error { border-left-color: #ff4136; }
+    .log-debug { border-left-color: #7fdbff; }
+    .log-raw { border-left-color: #888; font-style: italic; }
+    .log-sys {
+      color: #b5b5b5;
+      font-size: 0.97em;
+      margin-bottom: 0.2em;
+      font-family: 'Fira Mono', 'Consolas', monospace;
+    }
+    .log-timestamp { color: #8ecae6; font-size: 1em; font-weight: bold; margin-right: 0.5em; }
+    .log-level { font-weight: bold; text-transform: uppercase; margin-right: 0.5em; }
+    .log-msg { color: #fff; font-size: 1.05em; }
+    .log-caller { color: #b5e48c; font-size: 0.97em; margin-left: 0.5em; }
+    .log-icon { margin-right: 0.5em; }
+    .log-date { color: #ffd166; font-weight: bold; margin-right: 0.5em; }
+    .log-host { color: #a0c4ff; margin-right: 0.5em; }
+    .log-process { color: #bdb2ff; margin-right: 0.5em; }
+  </style>
+</head>
+<body>
+  <h2 style="margin-left:1em;">Solana Exporter Live Logs</h2>
+  <div id="log"></div>
+  <script>
+    const logDiv = document.getElementById('log');
+    const ws = new WebSocket('ws://192.168.1.210:8081');
+
+    function getLevelIcon(level) {
+      switch (level) {
+        case 'info': return 'ℹ️';
+        case 'warn': return '⚠️';
+        case 'error': return '❌';
+        case 'debug': return '🐞';
+        default: return '';
+      }
+    }
+
+    function formatMsg(msg) {
+      // If it's a long list, break it up
+      if (Array.isArray(msg)) {
+        return `<ul style="margin:0 0 0 1em;padding:0;">${msg.map(item => `<li>${item}</li>`).join('')}</ul>`;
+      }
+      // If it's a string with newlines, preserve them
+      if (typeof msg === 'string' && msg.includes('\n')) {
+        return msg.replace(/\n/g, '<br>');
+      }
+      return msg;
+    }
+
+    function addLogEntry(line) {
+      let entryDiv = document.createElement('div');
+      entryDiv.className = 'log-entry log-raw';
+
+      // Try to parse syslog prefix: "May 19 14:21:01 ubuntu solana-exporter[25626]: {json}"
+      const syslogRegex = /^([A-Z][a-z]{2} +\d{1,2} \d{2}:\d{2}:\d{2}) ([^ ]+) ([^\[]+\[\d+\]): (.*)$/;
+      const syslogMatch = line.match(syslogRegex);
+
+      if (syslogMatch) {
+        const [, date, host, process, rest] = syslogMatch;
+        let syslogDiv = document.createElement('div');
+        syslogDiv.className = 'log-sys';
+        syslogDiv.innerHTML =
+          `<span class="log-date">${date}</span>` +
+          `<span class="log-host">${host}</span>` +
+          `<span class="log-process">${process}</span>`;
+        entryDiv.appendChild(syslogDiv);
+
+        // Try to parse JSON part
+        try {
+          const logObj = JSON.parse(rest);
+          let level = (logObj.level || '').toLowerCase();
+          entryDiv.className = 'log-entry log-' + (level || 'info');
+          entryDiv.innerHTML += `
+            <div>
+              <span class="log-timestamp">${logObj.ts ? new Date(logObj.ts).toLocaleTimeString() : ''}</span>
+              <span class="log-level">${getLevelIcon(level)} ${logObj.level || ''}</span>
+              <span class="log-caller">${logObj.caller ? '(' + logObj.caller + ')' : ''}</span>
+            </div>
+            <div class="log-msg" style="margin-top:0.3em;">
+              ${formatMsg(logObj.msg)}
+            </div>
+          `;
+        } catch (e) {
+          // Not JSON, just show the rest
+          entryDiv.innerHTML += `<span class="log-msg">${rest}</span>`;
+        }
+      } else {
+        // Not syslog, try to parse as JSON
+        try {
+          const logObj = JSON.parse(line);
+          let level = (logObj.level || '').toLowerCase();
+          entryDiv.className = 'log-entry log-' + (level || 'info');
+          entryDiv.innerHTML = `
+            <div>
+              <span class="log-timestamp">${logObj.ts ? new Date(logObj.ts).toLocaleTimeString() : ''}</span>
+              <span class="log-level">${getLevelIcon(level)} ${logObj.level || ''}</span>
+              <span class="log-caller">${logObj.caller ? '(' + logObj.caller + ')' : ''}</span>
+            </div>
+            <div class="log-msg" style="margin-top:0.3em;">
+              ${formatMsg(logObj.msg)}
+            </div>
+          `;
+        } catch (e) {
+          // Not JSON, just show raw
+          entryDiv.textContent = line;
+        }
+      }
+      logDiv.appendChild(entryDiv);
+      logDiv.scrollTop = logDiv.scrollHeight;
+    }
+
+    ws.onmessage = (event) => {
+      addLogEntry(event.data);
+    };
+    ws.onopen = () => {
+      addLogEntry('[Connected to log stream]');
+    };
+    ws.onclose = () => {
+      addLogEntry('[Disconnected from log stream]');
+    };
+  </script>
+</body>
+</html> 

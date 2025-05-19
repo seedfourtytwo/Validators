@@ -6,7 +6,7 @@ System optimization settings are crucial for Solana validator performance. These
 ## Current Configuration
 
 ### File Descriptors
-Location: `/etc/security/limits.d/90-solana-nofiles.conf`
+Location: `/etc/security/limits.d/99-solana-nofiles.conf`
 ```bash
 sol soft nofile 2000000
 sol hard nofile 2000000

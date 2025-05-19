@@ -48,11 +48,24 @@ Save this script as `reset-firewall.sh` and run it before applying the nftables 
 ## Firewall Rules
 
 ### Input Chain Rules
-1. **Loopback Interface**
+1. **Solana Exporter Log WebSocket**
+   - Port: 8081 (TCP)
+   - Allowed Sources:
+     - LAN: 192.168.1.0/24
+     - OVH Web Server: 188.165.53.185
+     - Home Public IP: 77.200.151.32
+   - Rules:
+     ```bash
+     ip saddr 192.168.1.0/24 tcp dport 8081 accept
+     ip saddr 188.165.53.185 tcp dport 8081 accept
+     ip saddr 77.200.151.32 tcp dport 8081 accept
+     ```
+
+2. **Loopback Interface**
    - Accept all traffic on loopback interface
    - Rule: `iif lo accept`
 
-2. **Connection State**
+3. **Connection State**
    - Drop invalid connections
    - Accept established and related connections
    - Rules:
@@ -61,13 +74,13 @@ Save this script as `reset-firewall.sh` and run it before applying the nftables 
      ct state established,related accept
      ```
 
-3. **SSH Access**
+4. **SSH Access**
    - Source: LAN (192.168.1.0/24)
    - Port: 22 (TCP)
    - Rate Limit: 12 connections per minute
    - Rule: `ip saddr 192.168.1.0/24 tcp dport 22 ct state new limit rate 12/minute accept`
 
-4. **Web Services**
+5. **Web Services**
    - Grafana (Internal): Port 3000
    - HTTP (NGINX): Port 80
    - HTTPS (NGINX): Port 443
@@ -78,13 +91,13 @@ Save this script as `reset-firewall.sh` and run it before applying the nftables 
      tcp dport 443 accept
      ```
 
-5. **Monitoring**
+6. **Monitoring**
    - Prometheus: Port 9090
    - Source: LAN only (192.168.1.0/24)
    - Interface: enp3s0
    - Rule: `iifname "enp3s0" ip saddr 192.168.1.0/24 tcp dport 9090 accept`
 
-6. **Blockchain Nodes**
+7. **Blockchain Nodes**
    - Ethereum Node:
      - P2P TCP: Port 30303
      - P2P UDP: Port 30303
@@ -97,11 +110,11 @@ Save this script as `reset-firewall.sh` and run it before applying the nftables 
      tcp dport 8333 accept
      ```
 
-7. **ICMP (Ping)**
+8. **ICMP (Ping)**
    - Rate Limited: 5 pings per second
    - Rule: `ip protocol icmp icmp type echo-request limit rate 5/second accept`
 
-8. **Logging**
+9. **Logging**
    - Log all dropped packets
    - Prefix: "[nftables] DROP: "
    - Rule: `log prefix "[nftables] DROP: " flags all counter`
@@ -120,7 +133,7 @@ Save this script as `reset-firewall.sh` and run it before applying the nftables 
 3. LAN-only access for sensitive services (Prometheus)
 4. Logging of dropped packets for security monitoring
 5. Explicit allow rules for required services
-
+6. Restricted access to Solana Exporter Log WebSocket (port 8081) to trusted IPs only
 
 ## Complete Configuration File
 ```bash
@@ -135,6 +148,11 @@ flush ruleset
 table inet filter {
   chain input {
     type filter hook input priority filter; policy drop;
+
+    # Home server solana exporter logs websocket
+    ip saddr 192.168.1.0/24 tcp dport 8081 accept
+    ip saddr 188.165.53.185 tcp dport 8081 accept
+    ip saddr 77.200.151.32 tcp dport 8081 accept
 
     # Loopback and established connections
     iif lo accept

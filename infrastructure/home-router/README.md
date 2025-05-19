@@ -26,3 +26,7 @@
     - 443 (HTTPS)
     - 80 (HTTP)
   - Destination: 192.168.1.210
+- Log WebSocket
+  - Protocol: TCP
+  - Port: 8081
+  - Destination: 192.168.1.210

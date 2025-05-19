@@ -17,8 +17,10 @@ This document describes the Nginx reverse proxy configuration used to securely e
 ├── nginx.conf
 ├── sites-available/
 │   └── grafana
+│   └── log-websocket
 ├── sites-enabled/
 │   └── grafana -> ../sites-available/grafana
+│   └── log-websocket -> ../sites-available/log-websocket
 └── ssl/
     ├── grafana.crt
     └── grafana.key
@@ -172,6 +174,36 @@ server {
     }
 }
 ```
+
+### Solana Exporter Log WebSocket Proxy
+File: `/etc/nginx/sites-enabled/log-websocket`
+
+```
+server {
+    listen 8081 ssl;
+    server_name metric.seed42.co;
+
+    ssl_certificate /etc/letsencrypt/live/metric.seed42.co/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/metric.seed42.co/privkey.pem;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # --- SECURITY: Uncomment these lines after confirming everything works ---
+    # allow 188.165.53.185;   # OVH web server
+    # allow 192.168.1.0/24;   # Your local network (adjust as needed)
+    # deny all;
+
+    location / {
+        proxy_pass http://127.0.0.1:18081;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_read_timeout 86400;
+    }
+}
+```
+
+This configuration provides a secure (SSL) reverse proxy for the Solana Exporter Log WebSocket server, forwarding requests to the local WebSocket service running on port 18081. Adjust the `allow`/`deny` rules as needed for your security requirements.
 
 ## HTTP to HTTPS Redirection
 The current configuration does not include an explicit HTTP to HTTPS redirection. To implement this, you would need to add a separate server block that listens on port 80 and redirects all HTTP traffic to HTTPS. Here's how to implement it:

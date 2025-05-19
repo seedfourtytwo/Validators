@@ -1,0 +1,12 @@
+{
+  "name": "log-websocket-server",
+  "version": "1.0.0",
+  "description": "WebSocket server to stream solana-exporter logs",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.0.0"
+  }
+} 
