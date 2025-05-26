@@ -118,14 +118,14 @@ The Solana Exporter should only be accessible from your home IP address for secu
 
 ```bash
 # Allow Solana Exporter port (9100) only from home IP address
-tcp dport 9100 ip saddr { 77.200.151.32 } accept  # Solana Exporter
+tcp dport 9100 ip saddr { Home IP } accept  # Solana Exporter
 ```
 
 If you need to add this rule manually, use the following command:
 
 ```bash
 # Allow Solana Exporter port (9100) only from your home IP address
-sudo nft add rule inet filter input tcp dport 9100 ip saddr { 77.200.151.32 } accept comment "Solana Exporter from home IP"
+sudo nft add rule inet filter input tcp dport 9100 ip saddr { Home IP } accept comment "Solana Exporter from home IP"
 ```
 
 ### Verify Firewall Rules

@@ -53,12 +53,12 @@ Save this script as `reset-firewall.sh` and run it before applying the nftables 
    - Allowed Sources:
      - LAN: 192.168.1.0/24
      - OVH Web Server: 188.165.53.185
-     - Home Public IP: 77.200.151.32
+     - Home Public IP: Home IP
    - Rules:
      ```bash
      ip saddr 192.168.1.0/24 tcp dport 8081 accept
      ip saddr 188.165.53.185 tcp dport 8081 accept
-     ip saddr 77.200.151.32 tcp dport 8081 accept
+     ip saddr Home IP tcp dport 8081 accept
      ```
 
 2. **Loopback Interface**
@@ -152,7 +152,7 @@ table inet filter {
     # Home server solana exporter logs websocket
     ip saddr 192.168.1.0/24 tcp dport 8081 accept
     ip saddr 188.165.53.185 tcp dport 8081 accept
-    ip saddr 77.200.151.32 tcp dport 8081 accept
+    ip saddr Home IP tcp dport 8081 accept
 
     # Loopback and established connections
     iif lo accept

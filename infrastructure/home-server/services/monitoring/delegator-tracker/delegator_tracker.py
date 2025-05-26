@@ -67,6 +67,8 @@ def get_delegators():
                 name = "Solana Foundation"
             elif stake_authority == "JDa72CkixfF1JD9aYZosWqXyFCZwMpnVjR15bVBW2QRF":
                 name = "Validator Operator"
+            elif stake_authority == "973cJp85knY7bTuXEt3hRPGc4DB7W7Nbo6Egdbw3s3EF":
+                name = "Validator operator"
                 
             delegators.append({
                 'stake_account': stake_account,
